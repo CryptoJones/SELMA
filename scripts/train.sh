@@ -30,6 +30,25 @@ echo "GPU Info:"
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader
 echo ""
 
+# Check HuggingFace token (required for Llama 3.1 gated model)
+if [ -z "$HF_TOKEN" ]; then
+    echo "WARNING: HF_TOKEN not set. Llama 3.1 is a gated model."
+    echo "You need to:"
+    echo "  1. Accept the license at https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct"
+    echo "  2. Set your token: export HF_TOKEN='hf_...'"
+    echo ""
+    read -p "Enter HuggingFace token (or press Enter to try without): " HF_TOKEN
+    if [ -n "$HF_TOKEN" ]; then
+        export HF_TOKEN
+    fi
+fi
+
+if [ -n "$HF_TOKEN" ]; then
+    echo "HuggingFace token set. Logging in..."
+    huggingface-cli login --token "$HF_TOKEN" 2>/dev/null || true
+fi
+echo ""
+
 # Install dependencies
 echo "Step 1: Installing dependencies..."
 pip install -r requirements.txt
@@ -68,10 +87,10 @@ echo ""
 
 # Train
 echo "Step 3: Starting QLoRA fine-tuning..."
-echo "  Base model: Qwen/Qwen3-32B"
+echo "  Base model: meta-llama/Llama-3.1-70B-Instruct"
 echo "  Method: QLoRA (4-bit NF4)"
 echo "  LoRA rank: 64, alpha: 128"
-echo "  This will take several hours on a single A100-80GB."
+echo "  This will take 6-10 hours on a single A100-80GB." 
 echo ""
 
 python scripts/training/train_qlora.py --config configs/training_config.yaml

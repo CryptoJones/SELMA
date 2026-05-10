@@ -6,10 +6,10 @@
 
 | Model | GPU | VRAM | Notes |
 |-------|-----|------|-------|
-| Qwen3-32B (QLoRA) | A100-80GB | ~64GB | Recommended |
-| Qwen3-32B (QLoRA) | 2x A100-40GB | ~80GB | Multi-GPU alternative |
-| Qwen3-14B (QLoRA) | A100-40GB | ~28GB | Budget option |
-| Qwen3-14B (QLoRA) | RTX 4090 x2 | ~48GB | Consumer option |
+| Llama 3.1 70B (QLoRA) | A100-80GB | ~72GB | Recommended |
+| Llama 3.1 70B (QLoRA) | 2x A100-40GB | ~80GB | Multi-GPU alternative |
+| Llama 3.1 70B (QLoRA) | H100-80GB | ~72GB | Fastest option |
+| Llama 3.1 8B (QLoRA) | RTX 4090 | ~16GB | Lightweight/dev option |
 
 ### Software Requirements
 

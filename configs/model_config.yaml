@@ -1,9 +1,9 @@
 # SELMA Model Configuration
 
 model:
-  base: "Qwen/Qwen3-32B"
+  base: "meta-llama/Llama-3.1-70B-Instruct"
   adapter_path: "./output/selma-qlora/final"
-  merged_path: "./output/selma-merged"
+  merged_path: "./output/selma-merged" 
 
 inference:
   max_new_tokens: 2048
@@ -13,10 +13,8 @@ inference:
   repetition_penalty: 1.05
   do_sample: true
 
-  # Enable thinking mode for deep legal analysis
-  thinking_mode: true
-  # Thinking budget (max tokens for internal reasoning)
-  thinking_budget: 4096
+  # Llama 3.1 uses standard instruction-following
+  # For chain-of-thought reasoning, use explicit prompting
 
 prompts:
   system: |

@@ -44,7 +44,7 @@ echo ""
 POD_RESPONSE=$(curl -s -X POST "https://api.runpod.io/graphql?api_key=${RUNPOD_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
-    "query": "mutation { podFindAndDeployOnDemand(input: { name: \"SELMA-Training\", gpuTypeId: \"NVIDIA A100 80GB PCIe\", gpuCount: 1, volumeInGb: 100, containerDiskInGb: 50, templateId: \"runpod-torch-2.1\", dockerArgs: \"\", imageName: \"runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04\", env: [], ports: \"22/tcp\" }) { id imageName machine { gpu gpuDisplayName } } }"
+    "query": "mutation { podFindAndDeployOnDemand(input: { name: \"SELMA-Training\", gpuTypeId: \"NVIDIA A100 80GB PCIe\", gpuCount: 1, volumeInGb: 100, containerDiskInGb: 50, templateId: \"runpod-torch-2.4\", dockerArgs: \"\", imageName: \"runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04\", env: [], ports: \"22/tcp\" }) { id imageName machine { gpu gpuDisplayName } } }"
   }')
 
 echo "Response: $POD_RESPONSE"

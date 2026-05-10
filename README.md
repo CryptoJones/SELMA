@@ -13,10 +13,13 @@ of each offense, and provides structured legal reasoning.
 
 ## Architecture
 
-- **Base Model:** [Qwen3-32B](https://huggingface.co/Qwen/Qwen3-32B) (Apache 2.0)
+- **Base Model:** [Meta Llama 3.1 70B Instruct](https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct) (Llama 3.1 Community License)
 - **Fine-tuning Method:** QLoRA (4-bit quantization with Low-Rank Adaptation)
-- **Context Window:** 131K tokens (via YaRN extension)
-- **Reasoning:** Dual-mode thinking/non-thinking for deep legal analysis vs. quick lookups
+- **Context Window:** 128K tokens (native)
+- **Origin:** Meta Platforms, Inc. (United States)
+
+> **Why Llama 3.1 70B?** See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full
+> rationale, including national security, licensing, and performance considerations.
 
 ## Jurisdictions Covered
 
@@ -134,6 +137,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 ## License
 
-Copyright 2026 Ronin 48, LLC
+**Project Code, Data, and Documentation:** Apache License 2.0 — Copyright 2026 Ronin 48, LLC. See [LICENSE](LICENSE).
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+**Base Model Weights:** Meta Llama 3.1 Community License. See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for details.
+Fine-tuned adapter weights and all original SELMA contributions remain Apache 2.0.

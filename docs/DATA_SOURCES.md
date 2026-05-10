@@ -49,6 +49,14 @@ Generated incident-to-charge mappings covering common criminal scenarios for
 both federal (Title 18) and Georgia (Title 16) jurisdictions. See
 `data/synthetic/` for the generated dataset and generation scripts.
 
+## Base Model
+
+- **Model:** Meta Llama 3.1 70B Instruct
+- **Source:** https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+- **License:** Llama 3.1 Community License (Meta Platforms, Inc.)
+- **Origin:** United States
+- **Rationale:** See [MODEL_SELECTION.md](MODEL_SELECTION.md) for full rationale
+
 ## Data Provenance
 
 All training data sources are documented here for reproducibility and

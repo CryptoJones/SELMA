@@ -97,8 +97,8 @@ def analyze_incident(
     messages = format_analysis_prompt(incident)
 
     if thinking_mode:
-        # Enable Qwen3 thinking mode
-        messages[0]["content"] = "/think\n" + messages[0]["content"]
+        # Enable chain-of-thought reasoning via explicit prompt instruction
+        messages[0]["content"] = messages[0]["content"] + "\\n\\nThink step by step through your analysis before presenting conclusions."
 
     text = tokenizer.apply_chat_template(
         messages,

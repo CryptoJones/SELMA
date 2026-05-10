@@ -63,14 +63,15 @@ for r in results:
     print(f"{r['citation']}: {r['title']}")
 ```
 
-## Thinking Mode
+## Analysis Modes
 
-SELMA supports Qwen3's dual-mode reasoning:
+SELMA supports two analysis modes:
 
-- **Thinking mode** (default): Deep chain-of-thought analysis. Best for complex
+- **Deep analysis** (default): Chain-of-thought reasoning for complex
   incidents with multiple potential charges or jurisdictional issues.
-- **Non-thinking mode** (`--no-thinking`): Fast responses for simple lookups
-  or well-defined scenarios.
+  Uses explicit step-by-step prompting for thorough legal analysis.
+- **Quick analysis** (`--no-thinking`): Faster responses for simple lookups
+  or well-defined scenarios with fewer potential charges.
 
 ## Disclaimer
 

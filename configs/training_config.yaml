@@ -1,11 +1,12 @@
 # SELMA QLoRA Fine-tuning Configuration
-# Base model: Qwen/Qwen3-32B (Apache 2.0)
+# Base model: meta-llama/Llama-3.1-70B-Instruct (Llama 3.1 Community License)
+# See docs/MODEL_SELECTION.md for rationale on model choice.
 
 model:
-  name: "Qwen/Qwen3-32B"
+  name: "meta-llama/Llama-3.1-70B-Instruct"
   revision: "main"
   torch_dtype: "bfloat16"
-  attn_implementation: "flash_attention_2"
+  attn_implementation: "flash_attention_2" 
 
 quantization:
   load_in_4bit: true
