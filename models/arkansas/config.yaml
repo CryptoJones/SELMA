@@ -1,0 +1,22 @@
+# SELMA Configuration — Arkansas
+# Criminal Code: Ark. Code Ann. Title 5 (Criminal Offenses)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-arkansas
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Arkansas criminal law + federal"
+
+jurisdiction:
+  name: Arkansas
+  code_citation: "Ark. Code Ann. Title 5"
+  code_name: "Criminal Offenses"
+  includes_federal: true
+  abbreviation: AR
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/arkansas_statutes.json
+  synthetic_data: training_data/synthetic_arkansas.jsonl
+  output_dir: ../../output/selma-arkansas

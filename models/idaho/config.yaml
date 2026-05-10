@@ -1,0 +1,22 @@
+# SELMA Configuration — Idaho
+# Criminal Code: Idaho Code Title 18 (Crimes and Punishments)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-idaho
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Idaho criminal law + federal"
+
+jurisdiction:
+  name: Idaho
+  code_citation: "Idaho Code Title 18"
+  code_name: "Crimes and Punishments"
+  includes_federal: true
+  abbreviation: ID
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/idaho_statutes.json
+  synthetic_data: training_data/synthetic_idaho.jsonl
+  output_dir: ../../output/selma-idaho

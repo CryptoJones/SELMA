@@ -1,0 +1,22 @@
+# SELMA Configuration — Hawaii
+# Criminal Code: HRS Title 37 (Hawaii Penal Code)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-hawaii
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Hawaii criminal law + federal"
+
+jurisdiction:
+  name: Hawaii
+  code_citation: "HRS Title 37"
+  code_name: "Hawaii Penal Code"
+  includes_federal: true
+  abbreviation: HI
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/hawaii_statutes.json
+  synthetic_data: training_data/synthetic_hawaii.jsonl
+  output_dir: ../../output/selma-hawaii

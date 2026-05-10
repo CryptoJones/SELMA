@@ -1,0 +1,22 @@
+# SELMA Configuration — Alaska
+# Criminal Code: Alaska Stat. Title 11 (Criminal Law)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-alaska
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Alaska criminal law + federal"
+
+jurisdiction:
+  name: Alaska
+  code_citation: "Alaska Stat. Title 11"
+  code_name: "Criminal Law"
+  includes_federal: true
+  abbreviation: AK
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/alaska_statutes.json
+  synthetic_data: training_data/synthetic_alaska.jsonl
+  output_dir: ../../output/selma-alaska

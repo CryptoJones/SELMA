@@ -23,8 +23,12 @@ of each offense, and provides structured legal reasoning.
 
 ## Jurisdictions Covered
 
-- **Federal:** U.S. Code Title 18 — Crimes and Criminal Procedure
-- **State:** Georgia O.C.G.A. Title 16 — Crimes and Offenses
+SELMA trains a separate model per jurisdiction. Every state model includes
+federal law as baseline. See [docs/MULTI_STATE_ARCHITECTURE.md](docs/MULTI_STATE_ARCHITECTURE.md).
+
+- **Federal:** U.S. Code Title 18 — Crimes and Criminal Procedure (baseline for all models)
+- **50 State Models:** Each state's criminal code + federal law
+- **Priority states:** Georgia (O.C.G.A. Title 16), California, Texas, New York, Florida
 
 ## Capabilities
 
@@ -47,39 +51,45 @@ Given an incident description, SELMA can:
 SELMA/
 ├── LICENSE                          # Apache 2.0
 ├── README.md                        # This file
+├── SECURITY.md                      # Security policy
+├── CONTRIBUTING.md                  # Contribution guidelines
+├── models/
+│   ├── federal/                     # Federal-only model (18 U.S.C.)
+│   │   ├── config.yaml
+│   │   ├── README.md
+│   │   └── training_data/
+│   ├── georgia/                     # Georgia + federal
+│   │   ├── config.yaml
+│   │   ├── README.md
+│   │   └── training_data/
+│   ├── california/                  # California + federal
+│   │   └── ...
+│   └── [48 more states]/            # One directory per state
 ├── configs/
-│   ├── training_config.yaml         # QLoRA fine-tuning configuration
-│   └── model_config.yaml            # Model architecture configuration
+│   ├── training_config.yaml         # Base QLoRA fine-tuning configuration
+│   └── model_config.yaml            # Model inference configuration
 ├── data/
-│   ├── raw/
-│   │   ├── federal/                 # U.S. Code Title 18 (USLM XML)
-│   │   └── georgia/                 # O.C.G.A. Title 16
+│   ├── raw/                         # Downloaded source data
 │   ├── processed/                   # Cleaned, structured statute data
 │   └── synthetic/                   # Generated training examples
 ├── scripts/
 │   ├── data_collection/
-│   │   ├── fetch_federal_statutes.py
-│   │   ├── fetch_georgia_statutes.py
-│   │   └── fetch_legal_datasets.py
 │   ├── training/
+│   │   ├── train_qlora.py           # Core QLoRA trainer
+│   │   ├── train_state.py           # Multi-state training orchestrator
 │   │   ├── prepare_dataset.py
-│   │   ├── train_qlora.py
 │   │   └── merge_adapter.py
 │   └── evaluation/
-│       ├── evaluate_model.py
-│       └── benchmark_suite.py
-├── src/selma/
-│   ├── __init__.py
-│   ├── model.py                     # Model loading and inference
-│   ├── prompts.py                   # Prompt templates
-│   ├── statute_index.py             # Statute lookup and indexing
-│   └── schema.py                    # Data schemas
+├── src/selma/                       # Core Python modules
 ├── tests/
-│   └── test_schema.py
 └── docs/
-    ├── TRAINING.md                  # Training guide
-    ├── DATA_SOURCES.md              # Data provenance documentation
-    └── USAGE.md                     # Usage guide
+    ├── TRAINING.md
+    ├── DATA_SOURCES.md
+    ├── USAGE.md
+    ├── MODEL_SELECTION.md           # Why Llama 3.1 70B (not Chinese models)
+    ├── MULTI_STATE_ARCHITECTURE.md  # 50-state model design
+    ├── OWASP_COMPLIANCE.md          # Full security evaluation
+    └── SECURITY.md
 ```
 
 ## Quick Start
@@ -130,6 +140,15 @@ is taken. The model may produce incorrect or incomplete legal analysis.
 
 This software is provided "AS IS" without warranty of any kind. The developers
 assume no liability for decisions made based on SELMA's outputs.
+
+## Security
+
+SELMA has been evaluated against:
+- **OWASP Top 10 for LLM Applications (2025)** — AI-specific threats
+- **OWASP Top 10 for Web Applications (2021)** — General software security
+
+See [docs/OWASP_COMPLIANCE.md](docs/OWASP_COMPLIANCE.md) for the full evaluation
+and [SECURITY.md](SECURITY.md) for the security policy.
 
 ## Contributing
 

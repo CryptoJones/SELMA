@@ -1,0 +1,22 @@
+# SELMA Configuration — Georgia
+# Criminal Code: O.C.G.A. Title 16 (Crimes and Offenses)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-georgia
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Georgia criminal law + federal"
+
+jurisdiction:
+  name: Georgia
+  code_citation: "O.C.G.A. Title 16"
+  code_name: "Crimes and Offenses"
+  includes_federal: true
+  abbreviation: GA
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/georgia_statutes.json
+  synthetic_data: training_data/synthetic_georgia.jsonl
+  output_dir: ../../output/selma-georgia

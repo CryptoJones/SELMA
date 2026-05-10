@@ -1,0 +1,22 @@
+# SELMA Configuration — Arizona
+# Criminal Code: A.R.S. Title 13 (Criminal Code)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-arizona
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Arizona criminal law + federal"
+
+jurisdiction:
+  name: Arizona
+  code_citation: "A.R.S. Title 13"
+  code_name: "Criminal Code"
+  includes_federal: true
+  abbreviation: AZ
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/arizona_statutes.json
+  synthetic_data: training_data/synthetic_arizona.jsonl
+  output_dir: ../../output/selma-arizona

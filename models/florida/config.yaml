@@ -1,0 +1,22 @@
+# SELMA Configuration — Florida
+# Criminal Code: Fla. Stat. Title XLVI (Crimes)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-florida
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Florida criminal law + federal"
+
+jurisdiction:
+  name: Florida
+  code_citation: "Fla. Stat. Title XLVI"
+  code_name: "Crimes"
+  includes_federal: true
+  abbreviation: FL
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/florida_statutes.json
+  synthetic_data: training_data/synthetic_florida.jsonl
+  output_dir: ../../output/selma-florida

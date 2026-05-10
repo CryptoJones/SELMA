@@ -1,0 +1,20 @@
+# SELMA Configuration — Federal
+# Criminal Code: 18 U.S.C. (Crimes and Criminal Procedure)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-federal
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Federal criminal law (federal jurisdiction only)"
+
+jurisdiction:
+  name: Federal
+  code_citation: "18 U.S.C."
+  code_name: "Crimes and Criminal Procedure"
+  includes_federal: true
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  synthetic_data: training_data/synthetic_federal.jsonl
+  output_dir: ../../output/selma-federal

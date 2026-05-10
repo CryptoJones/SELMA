@@ -1,0 +1,22 @@
+# SELMA Configuration — Alabama
+# Criminal Code: Ala. Code Title 13A (Criminal Code)
+# All state models include federal law (18 U.S.C.) as baseline
+
+model:
+  name: selma-alabama
+  base: meta-llama/Llama-3.1-70B-Instruct
+  description: "SELMA model for Alabama criminal law + federal"
+
+jurisdiction:
+  name: Alabama
+  code_citation: "Ala. Code Title 13A"
+  code_name: "Criminal Code"
+  includes_federal: true
+  abbreviation: AL
+
+training:
+  base_config: ../../configs/training_config.yaml
+  federal_data: ../../data/processed/federal_statutes.json
+  state_data: training_data/alabama_statutes.json
+  synthetic_data: training_data/synthetic_alabama.jsonl
+  output_dir: ../../output/selma-alabama
