@@ -1,0 +1,59 @@
+# SELMA QLoRA Fine-tuning Configuration
+# Base model: Qwen/Qwen3-32B (Apache 2.0)
+
+model:
+  name: "Qwen/Qwen3-32B"
+  revision: "main"
+  torch_dtype: "bfloat16"
+  attn_implementation: "flash_attention_2"
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_compute_dtype: "bfloat16"
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_use_double_quant: true
+
+lora:
+  r: 64
+  lora_alpha: 128
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  task_type: "CAUSAL_LM"
+  bias: "none"
+
+training:
+  output_dir: "./output/selma-qlora"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  logging_steps: 10
+  save_steps: 200
+  eval_steps: 200
+  eval_strategy: "steps"
+  save_total_limit: 3
+  bf16: true
+  gradient_checkpointing: true
+  max_grad_norm: 1.0
+  group_by_length: true
+  dataloader_num_workers: 4
+  report_to: "none"
+
+data:
+  train_file: "data/processed/train.jsonl"
+  eval_file: "data/processed/eval.jsonl"
+  max_seq_length: 4096
+  packing: false
+
+seed: 42
