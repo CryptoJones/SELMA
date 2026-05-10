@@ -1,0 +1,10 @@
+{
+  "total": 20,
+  "detailed_analyses": 12,
+  "quick_reference": 8,
+  "jurisdictions": {
+    "federal": 1,
+    "georgia": 12,
+    "both": 7
+  }
+}

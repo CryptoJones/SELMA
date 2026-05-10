@@ -1,0 +1,7 @@
+{
+  "total_examples": 1118,
+  "train_examples": 1062,
+  "eval_examples": 56,
+  "statute_knowledge": 1098,
+  "synthetic": 20
+}
