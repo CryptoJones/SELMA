@@ -18,12 +18,12 @@ env/
 *.swp
 *.swo
 
-# Data (large files - download via scripts)
+# Raw data (large files - download via scripts)
 data/raw/
-data/processed/*.jsonl
-data/synthetic/*.jsonl
-!data/processed/.gitkeep
-!data/synthetic/.gitkeep
+
+# Training splits (regenerated from processed data)
+data/processed/train.jsonl
+data/processed/eval.jsonl
 
 # Model outputs
 output/
