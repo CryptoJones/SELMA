@@ -131,7 +131,7 @@ def deploy_pod(model_name, train_cmd):
             volumeInGb: 100,
             containerDiskInGb: 50,
             templateId: \"""" + TEMPLATE_ID + """\",
-            env: [{key: "HF_TOKEN", value: \"""" + HF_TOKEN + """\"}],
+            env: [{key: "HF_TOKEN", value: \"""" + HF_TOKEN + """\"}, {key: "HF_HOME", value: "/workspace/hf_cache"}, {key: "TRANSFORMERS_CACHE", value: "/workspace/hf_cache"}],
             ports: "22/tcp"
           }) {
             id name costPerHr
