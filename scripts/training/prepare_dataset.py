@@ -8,14 +8,17 @@ into a unified training format compatible with Llama 3.1 chat template.
 
 import json
 import random
+import sys
 from pathlib import Path
 
 from tqdm import tqdm
 
-PROCESSED_DIR = Path("data/processed")
-SYNTHETIC_DIR = Path("data/synthetic")
-RAW_DIR = Path("data/raw")
-OUTPUT_DIR = Path("data/processed")
+# Resolve paths relative to repo root regardless of CWD
+REPO_ROOT = Path(__file__).resolve().parent.parent.parent
+PROCESSED_DIR = REPO_ROOT / "data" / "processed"
+SYNTHETIC_DIR = REPO_ROOT / "data" / "synthetic"
+RAW_DIR = REPO_ROOT / "data" / "raw"
+OUTPUT_DIR = REPO_ROOT / "data" / "processed"
 
 SYSTEM_PROMPT = """You are SELMA (Specified Encapsulated Limitless Memory Archive), an AI assistant \
 trained to help law enforcement identify potential violations of criminal law.
