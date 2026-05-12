@@ -33,14 +33,25 @@ GPU_PREFERENCE = [
     "NVIDIA A100-SXM4-40GB",
 ]
 
-# Training queue — name, repo URL, train command
+# Training queue — runs in order after the first monitored pod completes
+# Priority: ABBY (running) → SELMA → BONES → BRUNO → ATTICUS (balance check)
 TRAINING_QUEUE = [
     {
-        "name": "ABBY",
-        "repo": "https://codeberg.org/Ronin48/ABBY.git",
-        "cmd": "git clone https://codeberg.org/Ronin48/ABBY.git && cd ABBY && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+        "name": "SELMA",
+        "repo": "https://codeberg.org/Ronin48/SELMA.git",
+        "cmd": "git clone https://codeberg.org/Ronin48/SELMA.git && cd SELMA && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
     },
-    # ATTICUS queued manually after checking balance
+    {
+        "name": "BONES",
+        "repo": "https://codeberg.org/Ronin48/BONES.git",
+        "cmd": "git clone https://codeberg.org/Ronin48/BONES.git && cd BONES && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+    },
+    {
+        "name": "BRUNO",
+        "repo": "https://codeberg.org/Ronin48/BRUNO.git",
+        "cmd": "git clone https://codeberg.org/Ronin48/BRUNO.git && cd BRUNO && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+    },
+    # ATTICUS queued manually after balance check
 ]
 
 
@@ -196,11 +207,11 @@ def monitor_pod(pod_id, model_name):
         time.sleep(POLL_INTERVAL)
 
 
-def run_queue(selma_pod_id):
-    # ── Step 1: Monitor SELMA ────────────────────────────────────────
-    monitor_pod(selma_pod_id, "SELMA")
+def run_queue(abby_pod_id):
+    # ── Step 1: Monitor ABBY (already running) ───────────────────────
+    monitor_pod(abby_pod_id, "ABBY")
 
-    # ── Step 2: Auto-queue ABBY ──────────────────────────────────────
+    # ── Step 2: Auto-queue SELMA → BONES → BRUNO ────────────────────
     for job in TRAINING_QUEUE:
         name = job["name"]
         log(f"")
@@ -224,7 +235,7 @@ def run_queue(selma_pod_id):
     # ── Step 3: Balance check before ATTICUS ────────────────────────
     log("")
     log("="*60)
-    log("ABBY training complete. Checking balance before ATTICUS...")
+    log("BRUNO training complete. Checking balance before ATTICUS...")
     balance, spend_rate = get_balance()
     if balance is not None:
         log(f"Remaining credit: ${balance:.2f} | Current spend rate: ${spend_rate:.2f}/hr")
@@ -263,5 +274,5 @@ if __name__ == "__main__":
     if "--atticus" in sys.argv:
         run_atticus()
     else:
-        pod_id = next((a for a in sys.argv[1:] if not a.startswith("--")), "xe7a00jq4myu69")
+        pod_id = next((a for a in sys.argv[1:] if not a.startswith("--")), "84xy4l8wxo79o8")
         run_queue(pod_id)

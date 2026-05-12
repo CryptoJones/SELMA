@@ -14,6 +14,9 @@ python3 assets/banner.py
 > *"Justice will not be served until those who are unaffected are as outraged as those who are."*
 > — Benjamin Franklin
 
+> *"I am SELMA — Specified Encapsulated Limitless Memory Archive. I am always here."*
+> — SELMA, *Time Traxx* (1993)
+
 ---
 
 ## Supporters
@@ -23,8 +26,7 @@ and in the hands of the people it is meant to serve.
 
 | Donor | Amount | Note |
 |---|---|---|
-| Ronin 48, LLC | N/A | Founding donor |
-| Ronin 48, LLC | N/A | Primary sponsor of research time and equipment |
+| Ronin 48, LLC | N/A | Founding donor & primary sponsor of research time and equipment |
 
 *Want to support SELMA? See [CONTRIBUTING.md](CONTRIBUTING.md) or reach out to the maintainers.*
 
@@ -46,8 +48,7 @@ review — it is a force-multiplier for the investigator who needs a place to st
 
 SELMA does not stand alone. It is one half of a balanced system.
 
-[**ATTICUS**](https://codeberg.org/Ronin48/ATTICUS) — *Automated Trial and Legal Intelligence for
-Criminal Defense Use Cases and Support* — is SELMA's companion model, built for the other side of
+[**ATTICUS**](https://codeberg.org/Ronin48/ATTICUS) — *Advocacy, Trial, Testimony, Innocence, Case, Unified Scout* — is SELMA's companion model, built for the other side of
 the courtroom. Where SELMA identifies what the prosecution may charge, ATTICUS builds the defense.
 Where SELMA maps evidence to statutes, ATTICUS maps evidence to constitutional protections.
 
@@ -252,6 +253,32 @@ python -m src.selma.model --input "Describe an incident..."
 | CaseHOLD | Legal holding classification | 585K examples | Open |
 | Digital Forensics Case Law | CFAA prosecutions, search/seizure digital | ~5K opinions | Public Domain |
 | Synthetic | Generated incident-to-statute mappings | ~50K examples | Apache 2.0 |
+
+---
+
+## Related Models — Ronin 48 First Responder Suite
+
+SELMA, BONES, and BRUNO are the three first responder models. Law enforcement, EMS, and fire share scenes constantly — consult the appropriate model for each domain.
+
+| Model | Domain | Use When... |
+|---|---|---|
+| **SELMA** | Law Enforcement | Criminal statute identification, charge elements, constitutional flags |
+| **[BONES](https://codeberg.org/Ronin48/BONES)** | EMS — EMR / EMT / AEMT / Paramedic | Patient assessment, treatment protocols, drug dosing, triage, transport |
+| **[BRUNO](https://codeberg.org/Ronin48/BRUNO)** *(Building Rescue and Unified Navigation Operations)* | Fire Service — Company Officer / IC | Fireground tactics, size-up, hazmat, extrication, water supply, ICS |
+
+### Common Shared Scenes
+
+| Scene Type | Primary | Support |
+|---|---|---|
+| Overdose call | BONES (patient care, naloxone) | SELMA (distribution charges if applicable) |
+| Domestic violence with injuries | SELMA (criminal charges, elements) | BONES (patient care) |
+| Active shooter / active threat | SELMA (legal authority, use of force) | BONES (casualty care, TECC) + BRUNO (scene safety, ICS) |
+| Mental health crisis with violence | SELMA (criminal elements) | BONES (patient assessment) |
+| Arson with casualties | BRUNO (fireground, origin/cause) | SELMA (arson statutes) + BONES (patient care) |
+| DUI crash with injuries | SELMA (criminal charges) | BONES (patient care) + BRUNO (extrication if needed) |
+| Mass casualty incident | BONES (triage, treatment) | BRUNO (ICS, sectors) + SELMA (criminal nexus if applicable) |
+
+> ABBY (digital forensics) and ATTICUS (legal defense) are separate tools and operate independently of the first responder suite.
 
 ---
 
