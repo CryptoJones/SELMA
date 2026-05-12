@@ -2,8 +2,8 @@
 """
 SELMA QLoRA Fine-tuning Script.
 
-Fine-tunes Qwen3-32B with QLoRA for criminal law analysis.
-Requires: A100-80GB GPU (or equivalent) for 32B model.
+Fine-tunes Llama 3.1 70B with QLoRA for criminal law analysis.
+Requires: A100-80GB GPU (or equivalent).
 """
 
 import argparse
@@ -103,11 +103,6 @@ def load_training_data(config: dict):
         print(f"Eval: {len(eval_dataset)} examples")
 
     return train_dataset, eval_dataset
-
-
-def formatting_func(example):
-    """Format a training example for the SFT trainer."""
-    return example["messages"]
 
 
 def train(config: dict):

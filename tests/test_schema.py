@@ -6,6 +6,7 @@ sys.path.insert(0, ".")
 from src.selma.schema import (
     Jurisdiction,
     Severity,
+    ChargeCategory,
     StatuteReference,
     OffenseElement,
     PotentialCharge,
@@ -82,6 +83,43 @@ def test_incident_analysis():
     assert len(analysis.additional_info_needed) == 1
 
 
+def test_criminal_charge_defaults_to_criminal_category():
+    ref = StatuteReference(jurisdiction=Jurisdiction.FEDERAL, title="18", section="1111", name="Murder")
+    charge = PotentialCharge(statute=ref, severity=Severity.FELONY)
+    assert charge.category == ChargeCategory.CRIMINAL
+
+
+def test_civil_charge_has_no_severity():
+    ref = StatuteReference(jurisdiction=Jurisdiction.FEDERAL, title="42", section="1983",
+                           name="Civil Rights — Color of Law")
+    charge = PotentialCharge(statute=ref, category=ChargeCategory.CIVIL)
+    assert charge.severity is None
+    assert charge.category == ChargeCategory.CIVIL
+
+
+def test_civil_statute_citation_format():
+    ref = StatuteReference(jurisdiction=Jurisdiction.FEDERAL, title="42", section="1983")
+    assert ref.full_citation == "42 U.S.C. § 1983"
+
+
+def test_incident_analysis_separates_criminal_and_civil():
+    criminal_ref = StatuteReference(jurisdiction=Jurisdiction.FEDERAL, title="18", section="2")
+    civil_ref = StatuteReference(jurisdiction=Jurisdiction.FEDERAL, title="42", section="1983")
+
+    criminal = PotentialCharge(statute=criminal_ref, severity=Severity.FELONY)
+    civil = PotentialCharge(statute=civil_ref, category=ChargeCategory.CIVIL)
+
+    analysis = IncidentAnalysis(
+        incident_description="Test incident",
+        potential_charges=[criminal],
+        civil_parallels=[civil],
+    )
+    assert len(analysis.potential_charges) == 1
+    assert len(analysis.civil_parallels) == 1
+    assert analysis.potential_charges[0].category == ChargeCategory.CRIMINAL
+    assert analysis.civil_parallels[0].category == ChargeCategory.CIVIL
+
+
 if __name__ == "__main__":
     test_statute_reference_federal()
     test_statute_reference_georgia()
@@ -89,4 +127,8 @@ if __name__ == "__main__":
     test_training_example_chat_format()
     test_training_example_to_dict()
     test_incident_analysis()
+    test_criminal_charge_defaults_to_criminal_category()
+    test_civil_charge_has_no_severity()
+    test_civil_statute_citation_format()
+    test_incident_analysis_separates_criminal_and_civil()
     print("All tests passed!")

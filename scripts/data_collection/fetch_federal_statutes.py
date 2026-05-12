@@ -7,6 +7,7 @@ Downloads the official USLM XML and parses it into structured JSON for training.
 
 import json
 import os
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -15,8 +16,14 @@ import requests
 from lxml import etree
 from tqdm import tqdm
 
-# USLM XML download URL (current release)
-USLM_XML_URL = "https://uscode.house.gov/download/releasepoints/us/pl/119/88/xml_usc18@119-88.zip"
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from src.selma.source_validator import validate_url
+
+# Fallback URL — pinned to a known-good release. discover_latest_url() will
+# try to find the current release first; this is only used if that fails.
+_FALLBACK_URL = "https://uscode.house.gov/download/releasepoints/us/pl/119/88/xml_usc18@119-88.zip"
+_DOWNLOAD_PAGE = "https://uscode.house.gov/download/download.shtml"
+
 RAW_DIR = Path("data/raw/federal")
 OUTPUT_DIR = Path("data/processed")
 
@@ -24,8 +31,31 @@ OUTPUT_DIR = Path("data/processed")
 NS = {"uslm": "https://xml.house.gov/schemas/uslm/1.0"}
 
 
-def download_title18(url: str = USLM_XML_URL) -> Path:
+def discover_latest_url() -> str:
+    """Discover the current Title 18 USLM XML zip URL from the House download page.
+
+    Falls back to the hardcoded release URL if discovery fails.
+    """
+    try:
+        resp = requests.get(_DOWNLOAD_PAGE, timeout=15)
+        resp.raise_for_status()
+        matches = re.findall(r'href="([^"]*xml_usc18@[^"]+\.zip)"', resp.text)
+        if matches:
+            url = matches[0]
+            if url.startswith("http"):
+                return url
+            return "https://uscode.house.gov" + url
+        print("Warning: Could not find Title 18 URL on download page; using fallback.")
+    except Exception as e:
+        print(f"Warning: URL discovery failed ({e}); using fallback URL.")
+    return _FALLBACK_URL
+
+
+def download_title18(url: str = None) -> Path:
     """Download Title 18 USLM XML zip file."""
+    if url is None:
+        url = discover_latest_url()
+    validate_url(url)
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     zip_path = RAW_DIR / "usc18.zip"
 

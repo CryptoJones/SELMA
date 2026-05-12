@@ -1,7 +1,8 @@
 {
-  "total_examples": 1118,
-  "train_examples": 1062,
-  "eval_examples": 56,
+  "total_examples": 595429,
+  "train_examples": 565657,
+  "eval_examples": 29772,
   "statute_knowledge": 1098,
-  "synthetic": 20
+  "synthetic": 20,
+  "legal_datasets": 594311
 }

@@ -1,0 +1,37 @@
+# SELMA MLX LoRA Training Configuration — Apple Silicon
+#
+# For Mac Mini M2/M3, MacBook Pro with Apple Silicon.
+# Requires: pip install mlx-lm
+# Does NOT require CUDA, bitsandbytes, or flash-attn.
+#
+# Tested on:
+#   - M2 Pro 16GB: ~3–4 hours per state model
+#   - M2 Max 32GB: ~1.5–2 hours per state model
+#   - M3 Max 48GB: ~1 hour per state model
+#
+# Usage:
+#   mlx_lm.lora --config configs/training_config_mlx.yaml
+
+model: "meta-llama/Llama-3.1-8B-Instruct"
+
+# LoRA settings
+lora_layers: 16          # layers to apply LoRA (increase for better quality, needs more RAM)
+lora_rank: 8             # LoRA rank (lower = less RAM, 8 works well for 16GB)
+
+# Training
+train: true
+data: "data/processed"
+iters: 1000              # increase to 2000 for higher quality
+batch_size: 4            # reduce to 2 if running out of unified memory
+learning_rate: 2.0e-5
+steps_per_report: 10
+steps_per_eval: 100
+save_every: 100
+adapter_path: "output/selma-mlx-adapters"
+max_seq_length: 2048
+
+# Validation
+val_batches: 25
+
+# Seed
+seed: 42

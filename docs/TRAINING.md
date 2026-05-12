@@ -16,12 +16,25 @@
 - Python 3.10+
 - CUDA 12.1+
 - PyTorch 2.3+
-- Flash Attention 2
+- Flash Attention 2 (`pip install flash-attn --no-build-isolation`) — optional but strongly recommended for training speed; falls back to `sdpa` if not installed
+
+### HuggingFace Authentication
+
+Llama 3.1 70B is a gated model. Before downloading:
+
+1. Accept the license at https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+2. Authenticate:
+
+```bash
+huggingface-cli login
+# or: export HF_TOKEN='hf_...' before running train.sh
+```
 
 ## Step 1: Data Collection
 
 ```bash
 # Download federal statutes (U.S. Code Title 18)
+# The script automatically discovers the current release from uscode.house.gov
 python scripts/data_collection/fetch_federal_statutes.py
 
 # Download Georgia statutes (O.C.G.A. Title 16)
@@ -29,6 +42,9 @@ python scripts/data_collection/fetch_georgia_statutes.py
 
 # Download legal NLP datasets from HuggingFace
 python scripts/data_collection/fetch_legal_datasets.py
+
+# Generate synthetic incident-to-charge training examples (~50K)
+python scripts/data_collection/generate_synthetic.py
 ```
 
 ## Step 2: Dataset Preparation
@@ -41,6 +57,10 @@ This combines:
 - Statute knowledge examples (federal + Georgia)
 - Synthetic incident-to-charge training examples
 - Legal reasoning examples from HuggingFace datasets
+
+> **Note:** If `data/synthetic/synthetic_training.jsonl` does not exist (i.e.,
+> `generate_synthetic.py` was not run), the synthetic examples are silently
+> skipped. The pipeline will still work but with ~50K fewer training examples.
 
 Output: `data/processed/train.jsonl` and `data/processed/eval.jsonl`
 
@@ -71,6 +91,10 @@ python scripts/training/merge_adapter.py --config configs/model_config.yaml
 
 This creates a standalone model at `output/selma-merged/` that can be loaded without PEFT.
 
+> **RAM requirement:** Merging loads the full 70B model in float16 on CPU — expect ~140GB
+> of system RAM. On machines with less RAM, the process will OOM. Consider using a
+> high-memory CPU instance (e.g., AWS r6i.48xlarge, 1.5TB RAM) for this step only.
+
 ## Step 5: Evaluation
 
 ```bash
@@ -82,7 +106,7 @@ python scripts/evaluation/evaluate_model.py \
 
 ## Tips
 
-- Start with Qwen3-14B for faster iteration before scaling to 32B
+- Use Llama 3.1 8B for faster iteration before scaling to 70B
 - Use the benchmark suite (`scripts/evaluation/benchmark_suite.py`) for qualitative testing
 - Monitor VRAM usage with `nvidia-smi` during training
 - If you run out of memory, reduce `per_device_train_batch_size` or `max_seq_length`

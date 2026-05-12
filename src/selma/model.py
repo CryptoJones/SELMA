@@ -98,7 +98,7 @@ def analyze_incident(
 
     if thinking_mode:
         # Enable chain-of-thought reasoning via explicit prompt instruction
-        messages[0]["content"] = messages[0]["content"] + "\\n\\nThink step by step through your analysis before presenting conclusions."
+        messages[0]["content"] = messages[0]["content"] + "\n\nThink step by step through your analysis before presenting conclusions."
 
     text = tokenizer.apply_chat_template(
         messages,

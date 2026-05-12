@@ -3,7 +3,7 @@
 Prepare training dataset for SELMA fine-tuning.
 
 Combines statutory data, legal datasets, and synthetic examples
-into a unified training format compatible with Qwen3 chat template.
+into a unified training format compatible with Llama 3.1 chat template.
 """
 
 import json
@@ -14,6 +14,7 @@ from tqdm import tqdm
 
 PROCESSED_DIR = Path("data/processed")
 SYNTHETIC_DIR = Path("data/synthetic")
+RAW_DIR = Path("data/raw")
 OUTPUT_DIR = Path("data/processed")
 
 SYSTEM_PROMPT = """You are SELMA (Specified Encapsulated Limitless Memory Archive), an AI assistant \
@@ -86,6 +87,125 @@ def load_statute_knowledge() -> list[dict]:
     return examples
 
 
+def load_casehold(path: Path) -> list[dict]:
+    """Convert CaseHOLD holdings into legal reasoning examples.
+
+    CSV-loaded schema uses numeric string keys:
+      "0" = citing prompt, "1"-"5" = holdings, "11" = correct label (int)
+    """
+    examples = []
+    with open(path) as f:
+        for line in f:
+            row = json.loads(line)
+            # Support both original field names and numeric CSV keys
+            citing_prompt = (row.get("citing_prompt") or row.get("0") or "").strip()
+            raw_label = row.get("label") if "label" in row else row.get("11")
+            if raw_label is None or citing_prompt == "":
+                continue
+            try:
+                label = int(float(raw_label))
+            except (ValueError, TypeError):
+                continue
+            if label < 0 or label > 4:
+                continue
+            holding_key = f"holding_{label}" if f"holding_{label}" in row else str(label + 1)
+            holding = row.get(holding_key, "").strip()
+            if not holding:
+                continue
+            examples.append({
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": f"In the following legal passage, identify the applicable legal holding:\n\n{citing_prompt}"},
+                    {"role": "assistant", "content": holding},
+                ],
+                "type": "case_holding",
+                "jurisdiction": "federal",
+            })
+    return examples
+
+
+def load_alea(path: Path) -> list[dict]:
+    """Convert ALEA US Courts case filings into classification examples.
+
+    Schema: source_identifier, nos_code, nos_desc, cause, text
+    """
+    examples = []
+    with open(path) as f:
+        for line in f:
+            row = json.loads(line)
+            text = (row.get("text") or "").strip()
+            nos_desc = (row.get("nos_desc") or "").strip()
+            cause = (row.get("cause") or "").strip()
+            if not text or (not nos_desc and not cause):
+                continue
+            label_parts = []
+            if nos_desc:
+                label_parts.append(nos_desc)
+            if cause:
+                label_parts.append(f"cause of action: {cause}")
+            label = "; ".join(label_parts)
+            examples.append({
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": f"Classify the following federal court filing by cause of action or nature of suit:\n\n{text}"},
+                    {"role": "assistant", "content": f"This filing involves: {label}"},
+                ],
+                "type": "case_classification",
+                "jurisdiction": "federal",
+            })
+    return examples
+
+
+def load_legalbench(path: Path) -> list[dict]:
+    """Convert LegalBench tasks into legal reasoning examples."""
+    examples = []
+    with open(path) as f:
+        for line in f:
+            row = json.loads(line)
+            question = (row.get("question") or row.get("input") or row.get("text") or "").strip()
+            answer = (row.get("answer") or row.get("output") or row.get("label") or "")
+            if not question or not answer:
+                continue
+            examples.append({
+                "messages": [
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": question},
+                    {"role": "assistant", "content": str(answer).strip()},
+                ],
+                "type": "legal_reasoning",
+                "jurisdiction": "federal",
+            })
+    return examples
+
+
+def load_legal_datasets() -> list[dict]:
+    """Load and convert HuggingFace legal datasets from data/raw/ if present."""
+    examples = []
+
+    if not RAW_DIR.exists():
+        return examples
+
+    casehold_path = RAW_DIR / "casehold.jsonl"
+    if casehold_path.exists():
+        loaded = load_casehold(casehold_path)
+        print(f"  CaseHOLD: {len(loaded)} examples")
+        examples.extend(loaded)
+
+    alea_path = RAW_DIR / "alea_courts.jsonl"
+    if alea_path.exists():
+        loaded = load_alea(alea_path)
+        print(f"  ALEA US Courts: {len(loaded)} examples")
+        examples.extend(loaded)
+
+    legalbench_path = RAW_DIR / "legalbench.jsonl"
+    if legalbench_path.exists():
+        loaded = load_legalbench(legalbench_path)
+        print(f"  LegalBench: {len(loaded)} examples")
+        examples.extend(loaded)
+
+    return examples
+
+
 def load_synthetic_examples() -> list[dict]:
     """Load synthetic incident-to-charge training examples."""
     examples = []
@@ -135,6 +255,11 @@ def main():
     print(f"  {len(synthetic_examples)} synthetic examples")
     all_examples.extend(synthetic_examples)
 
+    print("\nLoading HuggingFace legal datasets...")
+    legal_examples = load_legal_datasets()
+    print(f"  {len(legal_examples)} legal dataset examples")
+    all_examples.extend(legal_examples)
+
     print(f"\nTotal examples: {len(all_examples)}")
 
     # Split
@@ -152,6 +277,7 @@ def main():
         "eval_examples": len(eval_set),
         "statute_knowledge": len(statute_examples),
         "synthetic": len(synthetic_examples),
+        "legal_datasets": len(legal_examples),
     }
     with open(OUTPUT_DIR / "dataset_stats.json", "w") as f:
         json.dump(stats, f, indent=2)

@@ -10,12 +10,16 @@ https://www.lexisnexis.com/hottopics/gacode/
 
 import json
 import re
+import sys
 import time
 from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from src.selma.source_validator import validate_url
 
 BASE_URL = "https://law.onecle.com/georgia/title-16"
 RAW_DIR = Path("data/raw/georgia")
@@ -50,6 +54,7 @@ CHAPTERS = {
 def fetch_chapter_sections(chapter_num: str) -> list[dict]:
     """Fetch the list of sections for a given chapter."""
     url = f"{BASE_URL}/chapter-{chapter_num}/index.html"
+    validate_url(url)
     try:
         resp = requests.get(url, headers=HEADERS, timeout=30)
         resp.raise_for_status()

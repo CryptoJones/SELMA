@@ -63,6 +63,56 @@ for r in results:
     print(f"{r['citation']}: {r['title']}")
 ```
 
+### Ollama (Local — No Python Required)
+
+Once you have a trained model, SELMA can run via [Ollama](https://ollama.com) on any
+machine — no GPU required for the Q4_K_M quantized version (runs on CPU, ~4.5GB RAM for 8B).
+
+**Export to Ollama after training:**
+
+```bash
+# First merge the adapter into the base model
+python scripts/training/merge_adapter.py --config configs/model_config.yaml
+
+# Then export to Ollama (downloads llama.cpp, converts, quantizes, registers)
+./scripts/export_ollama.sh
+
+# Run
+ollama run selma
+```
+
+**Advanced export options:**
+
+```bash
+# Use a different quantization (larger = higher quality)
+./scripts/export_ollama.sh --quant Q5_K_M
+
+# Export the 70B model
+./scripts/export_ollama.sh --model-path ./output/selma-merged --name selma-70b
+
+# Build and push to the Ollama registry in one step
+./scripts/export_ollama.sh --push yourusername/selma
+```
+
+**Quantization size guide (8B model):**
+
+| Quantization | File size | RAM needed | Quality |
+|---|---|---|---|
+| Q4_K_M | ~4.5GB | ~6GB | Good — recommended default |
+| Q5_K_M | ~5.3GB | ~7GB | Better |
+| Q8_0 | ~8.5GB | ~10GB | Near-lossless |
+| f16 | ~16GB | ~18GB | Full precision |
+
+**Ollama API (for integrations):**
+
+```bash
+curl http://localhost:11434/api/generate -d '{
+  "model": "selma",
+  "prompt": "A suspect broke into a home and assaulted the owner.",
+  "stream": false
+}'
+```
+
 ## Analysis Modes
 
 SELMA supports two analysis modes:

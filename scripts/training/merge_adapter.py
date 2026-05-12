@@ -25,10 +25,11 @@ def merge_adapter(config: dict):
     merged_path = config["model"]["merged_path"]
 
     print(f"Loading base model: {base_model_name}")
+    print("NOTE: Llama 3.1 70B in bfloat16 requires ~140GB system RAM for the merge step.")
     model = AutoModelForCausalLM.from_pretrained(
         base_model_name,
-        torch_dtype=torch.bfloat16,
-        device_map="cpu",  # Merge on CPU to avoid OOM
+        torch_dtype=torch.float16,  # float16 vs bfloat16 halves nothing but keeps merge stable
+        device_map="cpu",
         trust_remote_code=True,
     )
 

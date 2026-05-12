@@ -1,0 +1,177 @@
+# SELMA Trusted Data Sources
+#
+# This file is the allowlist for all external data ingested during training.
+# Only URLs matching an entry here will be fetched by SELMA data collection scripts.
+#
+# Adding a new source:
+#   python scripts/add_source.py --help
+#
+# Fields:
+#   id              Unique identifier (snake_case). Used as a key in logs and errors.
+#   name            Human-readable description.
+#   jurisdiction    "federal" or a state abbreviation (e.g., "georgia", "california").
+#   type            "statute", "caselaw", or "dataset".
+#   url_patterns    List of allowed URL prefixes. Fetched URLs must match one of these.
+#   discovery_url   (optional) Page to scrape for the current download URL.
+#   discovery_regex (optional) Regex to extract the download URL from the discovery page.
+#   format          Expected data format: "uslm_xml", "html", "csv", "jsonl".
+#   license         Source license: "public_domain", "fair_use", "open", "cc_by", etc.
+#   note            (optional) Caveats, currency notes, or verification guidance.
+
+sources:
+
+  # ── Federal ──────────────────────────────────────────────────────────────────
+
+  - id: usc_title18
+    name: "U.S. Code Title 18 — Crimes and Criminal Procedure (USLM XML)"
+    jurisdiction: federal
+    type: statute
+    url_patterns:
+      - "https://uscode.house.gov/download/"
+    discovery_url: "https://uscode.house.gov/download/download.shtml"
+    discovery_regex: 'href="([^"]*xml_usc18@[^"]+\.zip)"'
+    format: uslm_xml
+    license: public_domain
+
+  # ── Georgia ───────────────────────────────────────────────────────────────────
+
+  - id: georgia_onecle
+    name: "Georgia O.C.G.A. Title 16 — Crimes and Offenses (onecle.com mirror)"
+    jurisdiction: georgia
+    type: statute
+    url_patterns:
+      - "https://law.onecle.com/georgia/"
+    format: html
+    license: fair_use
+    note: >
+      Unofficial mirror — may lag the official code. Verify critical sections
+      against the official source at https://www.lexisnexis.com/hottopics/gacode/
+    scraping:
+      strategy: html_list_then_detail
+      list_url: "https://law.onecle.com/georgia/title-16/chapter-{chapter}/index.html"
+      section_link_pattern: "16-\\d+-\\d+"
+      content_selector: "div.col-sm-12"
+      chapters:
+        "1": "General Provisions"
+        "2": "Criminal Liability"
+        "3": "Defenses to Criminal Prosecutions"
+        "4": "Criminal Attempt, Conspiracy, and Solicitation"
+        "5": "Crimes Against the Person"
+        "6": "Sexual Offenses"
+        "7": "Damage to and Intrusion Upon Property"
+        "8": "Offenses Involving Theft"
+        "9": "Forgery and Fraudulent Practices"
+        "10": "Offenses Against Public Administration"
+        "11": "Offenses Against Public Order and Safety"
+        "12": "Offenses Against Public Health and Morals"
+        "13": "Controlled Substances"
+        "14": "Racketeer Influenced and Corrupt Organizations"
+        "15": "Street Gang Terrorism and Prevention"
+        "16": "Civil Forfeiture"
+        "17": "Payday Lending"
+
+  # ── Federal Civil Statutes ────────────────────────────────────────────────────
+  # Included for civil-parallel awareness only. These are NOT criminal statutes.
+
+  - id: usc_title42
+    name: "U.S. Code Title 42 — Civil Rights (42 U.S.C. § 1983 et seq.)"
+    jurisdiction: federal
+    type: civil_statute
+    url_patterns:
+      - "https://uscode.house.gov/download/"
+    discovery_url: "https://uscode.house.gov/download/download.shtml"
+    discovery_regex: 'href="([^"]*xml_usc42@[^"]+\.zip)"'
+    format: uslm_xml
+    license: public_domain
+    note: >
+      Primary civil parallel for law enforcement incidents. § 1983 (color of law),
+      § 1985 (conspiracy), § 1988 (attorney fees). Awareness only — not a criminal statute.
+
+  # ── Georgia Civil Statutes ────────────────────────────────────────────────────
+  # Included for civil-parallel awareness only. These are NOT criminal statutes.
+
+  - id: georgia_title51_onecle
+    name: "Georgia O.C.G.A. Title 51 — Torts (civil parallels to criminal conduct)"
+    jurisdiction: georgia
+    type: civil_statute
+    url_patterns:
+      - "https://law.onecle.com/georgia/title-51/"
+    format: html
+    license: fair_use
+    note: >
+      Civil tort equivalents (assault, battery, false imprisonment, trespass).
+      Awareness only — not criminal charges. Verify against official O.C.G.A.
+
+  # ── Sentencing Guidelines ─────────────────────────────────────────────────────
+
+  - id: ussc_guidelines
+    name: "U.S. Sentencing Commission Guidelines Manual (USSG)"
+    jurisdiction: federal
+    type: sentencing
+    url_patterns:
+      - "https://www.ussc.gov/guidelines/"
+      - "https://www.ussc.gov/sites/default/files/"
+    format: pdf
+    license: public_domain
+    note: >
+      Federal sentencing guidelines. Use the current year's manual.
+      PDF chapters available at ussc.gov/guidelines.
+
+  - id: georgia_sentencing
+    name: "Georgia State Sentencing Guidelines (O.C.G.A. §§ 17-10-1 through 17-10-17)"
+    jurisdiction: georgia
+    type: sentencing
+    url_patterns:
+      - "https://law.onecle.com/georgia/title-17/"
+    format: html
+    license: fair_use
+    note: >
+      Georgia sentencing is largely discretionary (no binding grid). Mandatory minimums
+      in O.C.G.A. §§ 17-10-6.1, 16-13-30. Verify current mandatory minimums.
+
+  # ── Case Law (CourtListener) ──────────────────────────────────────────────────
+
+  - id: courtlistener_api
+    name: "CourtListener REST API — Federal and State Court Opinions"
+    jurisdiction: federal
+    type: caselaw
+    url_patterns:
+      - "https://www.courtlistener.com/api/rest/"
+      - "https://storage.courtlistener.com/"
+    format: jsonl
+    license: open
+    note: >
+      Free API (rate-limited). Set COURTLISTENER_API_KEY env var for higher limits.
+      See https://www.courtlistener.com/api/ for key signup.
+
+  # ── HuggingFace Datasets ─────────────────────────────────────────────────────
+
+  - id: hf_alea_courts
+    name: "ALEA US Courts NOS/Cause Classification"
+    jurisdiction: federal
+    type: dataset
+    url_patterns:
+      - "https://huggingface.co/datasets/alea-institute/"
+      - "https://huggingface.co/alea-institute/"
+    format: jsonl
+    license: open
+
+  - id: hf_legalbench
+    name: "LegalBench Legal Reasoning Tasks"
+    jurisdiction: federal
+    type: dataset
+    url_patterns:
+      - "https://huggingface.co/datasets/nguha/legalbench"
+      - "https://huggingface.co/nguha/legalbench"
+    format: jsonl
+    license: open
+
+  - id: hf_casehold
+    name: "CaseHOLD Legal Holding Classification"
+    jurisdiction: federal
+    type: dataset
+    url_patterns:
+      - "https://huggingface.co/datasets/casehold/"
+      - "https://huggingface.co/casehold/"
+    format: csv
+    license: open

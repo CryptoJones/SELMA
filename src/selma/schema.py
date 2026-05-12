@@ -17,21 +17,31 @@ class Jurisdiction(Enum):
 
 
 class Severity(Enum):
-    """Charge severity classification."""
+    """Criminal charge severity classification. Not applicable to civil matters."""
     INFRACTION = "infraction"
     MISDEMEANOR = "misdemeanor"
     FELONY = "felony"
 
 
+class ChargeCategory(Enum):
+    """Whether a charge is criminal or civil.
+
+    Criminal charges are always the primary focus. Civil statutes are included
+    only to flag parallel liability — they are NOT charges an officer can bring.
+    """
+    CRIMINAL = "criminal"
+    CIVIL = "civil"
+
+
 @dataclass
 class StatuteReference:
-    """Reference to a specific criminal statute."""
+    """Reference to a specific statute (criminal or civil)."""
     jurisdiction: Jurisdiction
-    title: str           # e.g., "18" for federal, "16" for Georgia
-    section: str         # e.g., "1111" for 18 U.S.C. § 1111
+    title: str           # e.g., "18" for 18 U.S.C., "42" for 42 U.S.C., "16" for O.C.G.A. Title 16
+    section: str         # e.g., "1111", "1983"
     subsection: str = "" # e.g., "(a)(1)"
-    name: str = ""       # e.g., "Murder"
-    full_citation: str = ""  # e.g., "18 U.S.C. § 1111(a)"
+    name: str = ""       # e.g., "Murder", "Civil Rights — Color of Law"
+    full_citation: str = ""
 
     def __post_init__(self):
         if not self.full_citation:
@@ -53,23 +63,75 @@ class OffenseElement:
 
 
 @dataclass
+class SentencingRange:
+    """Guideline sentencing range for a charge."""
+    source: str                          # e.g., "USSG 2023", "Georgia State"
+    guideline_section: str = ""          # e.g., "2A1.1" (USSG) or "17-10-2" (GA)
+    offense_level: Optional[int] = None  # USSG offense level (1–43)
+    criminal_history_category: str = "I" # I–VI for USSG
+    min_months: Optional[int] = None
+    max_months: Optional[int] = None
+    notes: str = ""                      # e.g., "life if CH III+", mandatory minimums
+
+
+@dataclass
+class CaseLawReference:
+    """A court decision relevant to a specific statute."""
+    case_name: str                  # e.g., "Miranda v. Arizona"
+    citation: str                   # e.g., "384 U.S. 436"
+    court: str                      # e.g., "U.S. Supreme Court", "11th Cir."
+    year: int
+    holding: str                    # One-sentence summary of the holding
+    statute_interpreted: str = ""   # Statute citation this case interprets
+    url: str = ""                   # CourtListener or official source URL
+
+
+@dataclass
+class MergerAnalysis:
+    """Whether this charge merges with others or is separately punishable."""
+    separately_punishable: bool = True
+    merges_with: list[str] = field(default_factory=list)  # statute citations
+    lesser_included_of: str = ""    # citation of the greater offense, if any
+    double_jeopardy_bar: bool = False
+    notes: str = ""
+
+
+@dataclass
 class PotentialCharge:
-    """A potential criminal charge identified from an incident."""
+    """A potential charge (criminal) or civil parallel identified from an incident."""
     statute: StatuteReference
-    severity: Severity
-    degree: str = ""                    # e.g., "first degree", "aggravated"
+    category: ChargeCategory = ChargeCategory.CRIMINAL
+    severity: Optional[Severity] = None  # None for civil matters
+    degree: str = ""                     # e.g., "first degree", "aggravated"
     elements: list[OffenseElement] = field(default_factory=list)
-    confidence: float = 0.0            # 0.0 to 1.0
+    confidence: float = 0.0
     reasoning: str = ""
     lesser_included: list[str] = field(default_factory=list)
+    notes: str = ""
+    sentencing: Optional[SentencingRange] = None
+    case_law: list[CaseLawReference] = field(default_factory=list)
+    merger: Optional[MergerAnalysis] = None
+
+
+@dataclass
+class StateComparison:
+    """How the same incident would be charged in a different jurisdiction."""
+    jurisdiction: Jurisdiction
+    charges: list[PotentialCharge] = field(default_factory=list)
+    key_differences: str = ""
     notes: str = ""
 
 
 @dataclass
 class IncidentAnalysis:
-    """Complete analysis of an incident for potential criminal violations."""
+    """Complete analysis of an incident for potential criminal violations and civil parallels."""
     incident_description: str
+    # Criminal charges — primary focus; what the officer may pursue
     potential_charges: list[PotentialCharge] = field(default_factory=list)
+    # Civil parallels — secondary; flagged for awareness, NOT actionable by the officer
+    civil_parallels: list[PotentialCharge] = field(default_factory=list)
+    # How this incident would be charged under other jurisdictions' law
+    state_comparisons: list[StateComparison] = field(default_factory=list)
     jurisdictional_notes: str = ""
     additional_info_needed: list[str] = field(default_factory=list)
     summary: str = ""

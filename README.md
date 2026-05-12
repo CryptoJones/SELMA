@@ -101,16 +101,26 @@ cd SELMA
 
 # Install dependencies
 pip install -r requirements.txt
+# flash-attn is optional but strongly recommended for training speed
+pip install flash-attn --no-build-isolation
+
+# Authenticate with HuggingFace (required — Llama 3.1 is a gated model)
+# First accept the license at: https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+huggingface-cli login
 
 # Download training data
 python scripts/data_collection/fetch_federal_statutes.py
 python scripts/data_collection/fetch_georgia_statutes.py
 python scripts/data_collection/fetch_legal_datasets.py
 
+# Generate synthetic training examples (~50K incident-to-statute pairs)
+python scripts/data_collection/generate_synthetic.py
+
 # Prepare the dataset
 python scripts/training/prepare_dataset.py
 
-# Fine-tune the model (requires A100-80GB or equivalent)
+# Fine-tune the model (requires A100-80GB or equivalent, ~6-10 hours)
+# The merge step (merge_adapter.py) requires ~140GB system RAM
 python scripts/training/train_qlora.py --config configs/training_config.yaml
 
 # Merge LoRA adapter into base model
