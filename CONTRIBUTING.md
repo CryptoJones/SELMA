@@ -64,7 +64,7 @@ python scripts/training/train_qlora.py --config configs/training_config_8b.yaml
 
 See **[docs/RUNPOD.md](docs/RUNPOD.md)** for the full guide.
 
-**Lazy mode** (recommended):
+**Lazy mode** (⚠️ NOT RECOMMENDED FOR SECURITY REASONS):
 
 ```bash
 export RUNPOD_API_KEY="your_key"

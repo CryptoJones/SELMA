@@ -15,9 +15,11 @@
 
 ## Step 1 — Launch a Pod
 
-### Option A: Fully Automated (For the Lazy™)
+### Option A: Fully Automated (For the Lazy™) — ⚠️ NOT RECOMMENDED FOR SECURITY REASONS
 
 Because programmers are fundamentally lazy — and that's a feature, not a bug — we built a script that does everything:
+
+⚠️ **Security warning:** This script runs unattended SSH commands on a remote pod. Your API keys are passed as environment variables. Only use this on trusted machines or in isolated environments.
 
 ```bash
 export RUNPOD_API_KEY="your_runpod_key_here"
