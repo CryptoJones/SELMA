@@ -21,10 +21,10 @@ python3 assets/banner.py
 SELMA is community-funded. Every contribution — great or small — keeps this project free, open,
 and in the hands of the people it is meant to serve.
 
-|| Donor | Amount | Note |
-||---|---|---|
-|| Ronin 48, LLC | N/A | Founding donor |
-|| Ronin 48, LLC | N/A | Primary sponsor of research time and equipment |
+| Donor | Amount | Note |
+|---|---|---|
+| Ronin 48, LLC | N/A | Founding donor |
+| Ronin 48, LLC | N/A | Primary sponsor of research time and equipment |
 
 *Want to support SELMA? See [CONTRIBUTING.md](CONTRIBUTING.md) or reach out to the maintainers.*
 
