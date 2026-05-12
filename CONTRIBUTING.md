@@ -60,14 +60,29 @@ python scripts/training/prepare_dataset.py
 python scripts/training/train_qlora.py --config configs/training_config_8b.yaml
 ```
 
-### Option C — Vast.ai or RunPod (~$15–25 per state model)
+### Option C — RunPod (~$30 per 70B state model)
 
-Rent an A100-80GB spot instance, then:
+See **[docs/RUNPOD.md](docs/RUNPOD.md)** for the full step-by-step guide.
+
+Quick version:
 
 ```bash
-chmod +x scripts/train.sh
-./scripts/train.sh
+# From your local machine
+export RUNPOD_API_KEY="your_key"
+export HF_TOKEN="hf_your_token"
+bash scripts/launch_runpod.sh
 ```
+
+Or spin up a pod manually (A100-80GB PCIe, RunPod PyTorch 2.2 template, 100GB volume),
+SSH in, and run:
+
+```bash
+git clone https://codeberg.org/Ronin48/SELMA.git && cd SELMA
+./scripts/train.sh --skip-merge
+```
+
+The `--skip-merge` flag is required on RunPod — the merge step needs ~140GB system RAM
+which pods don't have. Upload your adapter to HuggingFace instead and open a PR.
 
 ### Testing Against the Published Model
 

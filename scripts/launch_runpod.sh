@@ -4,19 +4,28 @@
 #
 # Usage:
 #   export RUNPOD_API_KEY="your_key_here"
+#   export HF_TOKEN="hf_your_token_here"
 #   bash scripts/launch_runpod.sh
 #
 # This script:
 #   1. Creates an A100-80GB GPU pod on RunPod
 #   2. Clones the SELMA repository
-#   3. Runs the full training pipeline
-#   4. Uploads the trained model to HuggingFace (optional)
+#   3. Runs the full training pipeline (merge skipped — needs ~140GB RAM)
+#
+# See docs/RUNPOD.md for the full guide.
 
 set -e
 
 if [ -z "$RUNPOD_API_KEY" ]; then
     echo "ERROR: Set RUNPOD_API_KEY environment variable first"
     echo "  export RUNPOD_API_KEY='your_key_here'"
+    exit 1
+fi
+
+if [ -z "$HF_TOKEN" ]; then
+    echo "ERROR: Set HF_TOKEN environment variable first"
+    echo "  export HF_TOKEN='hf_...'"
+    echo "  (Accept the Llama 3.1 license first: https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct)"
     exit 1
 fi
 
@@ -43,9 +52,9 @@ echo ""
 # Create pod using RunPod API directly
 POD_RESPONSE=$(curl -s -X POST "https://api.runpod.io/graphql?api_key=${RUNPOD_API_KEY}" \
   -H "Content-Type: application/json" \
-  -d '{
-    "query": "mutation { podFindAndDeployOnDemand(input: { name: \"SELMA-Training\", gpuTypeId: \"NVIDIA A100 80GB PCIe\", gpuCount: 1, volumeInGb: 100, containerDiskInGb: 50, templateId: \"runpod-torch-2.4\", dockerArgs: \"\", imageName: \"runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel-ubuntu22.04\", env: [], ports: \"22/tcp\" }) { id imageName machine { gpu gpuDisplayName } } }"
-  }')
+  -d "{
+    \"query\": \"mutation { podFindAndDeployOnDemand(input: { name: \\\"SELMA-Training\\\", gpuTypeId: \\\"NVIDIA A100 80GB PCIe\\\", gpuCount: 1, volumeInGb: 100, containerDiskInGb: 50, imageName: \\\"runpod/pytorch:2.2.0-py3.10-cuda12.1.1-devel-ubuntu22.04\\\", env: [{key: \\\"HF_TOKEN\\\", value: \\\"${HF_TOKEN}\\\"}], ports: \\\"22/tcp\\\" }) { id imageName machine { gpu gpuDisplayName } } }\"
+  }")
 
 echo "Response: $POD_RESPONSE"
 
@@ -65,7 +74,7 @@ if [ -z "$POD_ID" ]; then
     echo "   git clone https://codeberg.org/Ronin48/SELMA.git"
     echo "   cd SELMA"
     echo "   chmod +x scripts/train.sh"
-    echo "   ./scripts/train.sh"
+    echo "   ./scripts/train.sh --skip-merge"
     echo ""
     exit 1
 fi
@@ -95,8 +104,9 @@ echo "  cd SELMA"
 echo "  chmod +x scripts/train.sh"
 echo "  ./scripts/train.sh"
 echo ""
-echo "Training will take approximately 3-6 hours on an A100-80GB."
-echo "When done, the model will be at output/selma-merged/"
+echo "Training will take approximately 8-10 hours on an A100-80GB."
+echo "Adapter will be saved to output/selma-qlora/final/"
+echo "(Merge step skipped — requires ~140GB RAM. See docs/RUNPOD.md.)"
 echo ""
 echo "To stop the pod when finished (saves money):"
 echo "  runpodctl stop pod $POD_ID"

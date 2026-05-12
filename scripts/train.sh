@@ -9,9 +9,15 @@
 #
 # Usage:
 #   chmod +x scripts/train.sh
-#   ./scripts/train.sh
+#   ./scripts/train.sh               # full pipeline including merge
+#   ./scripts/train.sh --skip-merge  # skip merge (use on RunPod — needs ~140GB RAM)
 
 set -e
+
+SKIP_MERGE=false
+for arg in "$@"; do
+    [[ "$arg" == "--skip-merge" ]] && SKIP_MERGE=true
+done
 
 echo "============================================================"
 echo "SELMA — Training Pipeline"
@@ -96,8 +102,16 @@ echo ""
 python scripts/training/train_qlora.py --config configs/training_config.yaml
 
 echo ""
-echo "Step 4: Merging adapter..."
-python scripts/training/merge_adapter.py --config configs/model_config.yaml
+if [ "$SKIP_MERGE" = true ]; then
+    echo "Step 4: Skipping merge (--skip-merge set)."
+    echo "  NOTE: Merging requires ~140GB system RAM (more than most RunPod pods have)."
+    echo "  Upload your adapter to HuggingFace, then merge on a high-RAM CPU instance."
+    echo "  See docs/RUNPOD.md for instructions."
+else
+    echo "Step 4: Merging adapter..."
+    echo "  NOTE: This requires ~140GB system RAM. If it OOMs, re-run with --skip-merge."
+    python scripts/training/merge_adapter.py --config configs/model_config.yaml
+fi
 
 echo ""
 echo "Step 5: Running evaluation..."

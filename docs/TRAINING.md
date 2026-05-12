@@ -109,6 +109,19 @@ python scripts/evaluation/evaluate_model.py \
     --output output/evaluation_results.json
 ```
 
+## Running on RunPod
+
+See **[docs/RUNPOD.md](RUNPOD.md)** for the full guide. Short version:
+
+```bash
+export RUNPOD_API_KEY="your_key"
+export HF_TOKEN="hf_your_token"
+bash scripts/launch_runpod.sh
+```
+
+Use `./scripts/train.sh --skip-merge` on RunPod — the merge step requires ~140GB
+system RAM that pods don't have. Upload the adapter to HuggingFace after training.
+
 ## Tips
 
 - Use Llama 3.1 8B for faster iteration before scaling to 70B
