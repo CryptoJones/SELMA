@@ -64,17 +64,16 @@ python scripts/training/train_qlora.py --config configs/training_config_8b.yaml
 
 See **[docs/RUNPOD.md](docs/RUNPOD.md)** for the full step-by-step guide.
 
-Quick version:
+Use the interactive configurator:
 
 ```bash
-# From your local machine
 export RUNPOD_API_KEY="your_key"
 export HF_TOKEN="hf_your_token"
-bash scripts/launch_runpod.sh
+bash scripts/launch_runpod_manual.sh
 ```
 
-Or spin up a pod manually (A100-80GB PCIe, RunPod PyTorch 2.2 template, 100GB volume),
-SSH in, and run:
+The script validates your setup and prints exact web console steps to create the pod,
+with your HF_TOKEN pre-filled. Once SSH'd in, the pod runs:
 
 ```bash
 git clone https://codeberg.org/Ronin48/SELMA.git && cd SELMA

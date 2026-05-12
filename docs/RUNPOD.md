@@ -15,13 +15,17 @@
 
 ## Step 1 — Launch a Pod
 
-### Option A: Automated (from your local machine)
+### Option A: Step-by-Step Configurator (Recommended)
+
+Use the interactive launch script to validate your credentials and get exact instructions:
 
 ```bash
 export RUNPOD_API_KEY="your_runpod_key_here"
 export HF_TOKEN="hf_your_token_here"
-bash scripts/launch_runpod.sh
+bash scripts/launch_runpod_manual.sh
 ```
+
+The script checks your setup and prints clear web console steps with your HF_TOKEN pre-filled.
 
 ### Option B: Manual (RunPod web console)
 
