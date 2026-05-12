@@ -1,0 +1,5 @@
+data/raw/**/*.html linguist-vendored
+data/raw/**/*.json linguist-vendored
+data/raw/**/*.jsonl linguist-vendored
+data/processed/**  linguist-vendored
+data/synthetic/**  linguist-vendored
