@@ -15,9 +15,28 @@
 
 ## Step 1 — Launch a Pod
 
-### Option A: Step-by-Step Configurator (Recommended)
+### Option A: Fully Automated (For the Lazy™)
 
-Use the interactive launch script to validate your credentials and get exact instructions:
+Because programmers are fundamentally lazy — and that's a feature, not a bug — we built a script that does everything:
+
+```bash
+export RUNPOD_API_KEY="your_runpod_key_here"
+export HF_TOKEN="hf_your_token_here"
+python3 scripts/runpod_deploy.py
+```
+
+This script:
+1. Deploys an A100-80GB pod to RunPod
+2. Waits for it to be ready (~2-3 minutes)
+3. SSHes in automatically
+4. Clones SELMA and starts training
+5. Streams output to your terminal
+
+No web console. No clicking. No thinking. Just training.
+
+### Option B: Step-by-Step Configurator
+
+If you prefer to see the steps before running them:
 
 ```bash
 export RUNPOD_API_KEY="your_runpod_key_here"
@@ -25,9 +44,9 @@ export HF_TOKEN="hf_your_token_here"
 bash scripts/launch_runpod_manual.sh
 ```
 
-The script checks your setup and prints clear web console steps with your HF_TOKEN pre-filled.
+The script validates your setup and prints exact web console instructions with your HF_TOKEN pre-filled.
 
-### Option B: Manual (RunPod web console)
+### Option C: Manual (RunPod web console)
 
 1. Go to https://www.runpod.io/console/pods and click **Deploy**
 2. Select GPU: **NVIDIA A100 80GB PCIe** (~$2–3/hr) or **SXM** (~$3–4/hr)

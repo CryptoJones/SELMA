@@ -62,22 +62,24 @@ python scripts/training/train_qlora.py --config configs/training_config_8b.yaml
 
 ### Option C — RunPod (~$30 per 70B state model)
 
-See **[docs/RUNPOD.md](docs/RUNPOD.md)** for the full step-by-step guide.
+See **[docs/RUNPOD.md](docs/RUNPOD.md)** for the full guide.
 
-Use the interactive configurator:
+**Lazy mode** (recommended):
+
+```bash
+export RUNPOD_API_KEY="your_key"
+export HF_TOKEN="hf_your_token"
+python3 scripts/runpod_deploy.py
+```
+
+Deploys the pod, waits for it, SSHes in, and runs training end-to-end. No web console required.
+
+**Manual mode** (if you prefer to see the steps):
 
 ```bash
 export RUNPOD_API_KEY="your_key"
 export HF_TOKEN="hf_your_token"
 bash scripts/launch_runpod_manual.sh
-```
-
-The script validates your setup and prints exact web console steps to create the pod,
-with your HF_TOKEN pre-filled. Once SSH'd in, the pod runs:
-
-```bash
-git clone https://codeberg.org/Ronin48/SELMA.git && cd SELMA
-./scripts/train.sh --skip-merge
 ```
 
 The `--skip-merge` flag is required on RunPod — the merge step needs ~140GB system RAM
