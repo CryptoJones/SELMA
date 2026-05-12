@@ -1,6 +1,32 @@
 # SELMA Usage Guide
 
-## Installation
+## Quickest Start — Ollama (Published Model)
+
+SELMA is available on the Ollama registry. This is the fastest way to run it locally
+with no Python, no GPU, and no training required:
+
+```bash
+# Install Ollama from https://ollama.com/download, then:
+ollama run Ronin48/selma
+```
+
+The published model runs on CPU and requires ~6GB RAM. It uses Llama 3.1 8B as its
+base with SELMA's full system prompt pre-configured. A fine-tuned version will replace
+this once training is complete.
+
+**Ollama API:**
+
+```bash
+curl http://localhost:11434/api/generate -d '{
+  "model": "Ronin48/selma",
+  "prompt": "A suspect broke into a home in Atlanta, GA and assaulted the owner.",
+  "stream": false
+}'
+```
+
+---
+
+## Installation (Python)
 
 ```bash
 git clone https://codeberg.org/Ronin48/SELMA.git
@@ -65,10 +91,13 @@ for r in results:
 
 ### Ollama (Local — No Python Required)
 
-Once you have a trained model, SELMA can run via [Ollama](https://ollama.com) on any
-machine — no GPU required for the Q4_K_M quantized version (runs on CPU, ~4.5GB RAM for 8B).
+SELMA is published at **https://ollama.com/Ronin48/selma**. Pull and run it directly:
 
-**Export to Ollama after training:**
+```bash
+ollama run Ronin48/selma
+```
+
+**Export your own fine-tuned model to Ollama:**
 
 ```bash
 # First merge the adapter into the base model
@@ -107,7 +136,7 @@ ollama run selma
 
 ```bash
 curl http://localhost:11434/api/generate -d '{
-  "model": "selma",
+  "model": "Ronin48/selma",
   "prompt": "A suspect broke into a home and assaulted the owner.",
   "stream": false
 }'

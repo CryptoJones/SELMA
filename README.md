@@ -3,6 +3,7 @@
 **An Open-Source Model Trained for Law Enforcement**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Ollama](https://img.shields.io/badge/Ollama-Ronin48%2Fselma-black)](https://ollama.com/Ronin48/selma)
 
 ## Overview
 
@@ -92,12 +93,18 @@ SELMA/
     └── SECURITY.md
 ```
 
-## Quick Start
+## Try It Now
+
+SELMA is published on the Ollama registry. No training or Python required:
 
 ```bash
-# Clone the repository
-git clone https://codeberg.org/Ronin48/SELMA.git
-cd SELMA
+ollama run Ronin48/selma
+```
+
+The published model uses Llama 3.1 8B as its base with SELMA's full system prompt and
+inference parameters. A fine-tuned version will be published once training is complete.
+
+## Quick Start
 
 # Install dependencies
 pip install -r requirements.txt
