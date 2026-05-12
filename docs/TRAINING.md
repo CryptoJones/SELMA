@@ -27,7 +27,7 @@
 
 Llama 3.1 70B is a gated model. Before downloading:
 
-1. Accept the license at https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+1. Accept the license at https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
 2. Authenticate:
 
 ```bash

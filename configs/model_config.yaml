@@ -1,7 +1,7 @@
 # SELMA Model Configuration
 
 model:
-  base: "meta-llama/Llama-3.1-70B-Instruct"
+  base: "meta-llama/Llama-3.3-70B-Instruct"
   adapter_path: "./output/selma-qlora/final"
   merged_path: "./output/selma-merged" 
 

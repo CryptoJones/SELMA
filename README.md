@@ -67,13 +67,13 @@ the hands of the public defender.
 
 ## Architecture
 
-- **Base Model:** [Meta Llama 3.1 70B Instruct](https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct) (Llama 3.1 Community License)
+- **Base Model:** [Meta Llama 3.3 70B Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct) (Llama 3.1 Community License)
 - **Fine-tuning Method:** QLoRA (4-bit quantization with Low-Rank Adaptation)
 - **Context Window:** 128K tokens (native)
 - **Quantization:** NF4 double quantization via bitsandbytes
 - **Origin:** Meta Platforms, Inc. (United States)
 
-> **Why Llama 3.1 70B?** See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full
+> **Why Llama 3.3 70B?** See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for the full
 > rationale, including national security, licensing, and performance considerations.
 
 ---
@@ -197,7 +197,7 @@ SELMA/
     ├── TRAINING.md
     ├── DATA_SOURCES.md
     ├── USAGE.md
-    ├── MODEL_SELECTION.md           # Why Llama 3.1 70B (not Chinese models)
+    ├── MODEL_SELECTION.md           # Why Llama 3.3 70B (not Chinese models)
     ├── MULTI_STATE_ARCHITECTURE.md  # 50-state model design
     ├── OWASP_COMPLIANCE.md          # Full security evaluation
     └── SECURITY.md
@@ -214,7 +214,7 @@ pip install -r requirements.txt
 pip install flash-attn --no-build-isolation
 
 # Authenticate with HuggingFace (required — Llama 3.1 is a gated model)
-# First accept the license at: https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+# First accept the license at: https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
 huggingface-cli login
 
 # Download training data

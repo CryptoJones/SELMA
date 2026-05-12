@@ -41,7 +41,7 @@ Will be tagged per state (e.g. `v1.0.0-georgia`, `v1.0.0-federal`).
 
 ## [v1.0.0] — In Training (Started 2026-05-12)
 
-**Base model:** `meta-llama/Llama-3.1-70B-Instruct` (QLoRA fine-tuned)
+**Base model:** `meta-llama/Llama-3.3-70B-Instruct` (QLoRA fine-tuned)
 **Type:** Fine-tuned on criminal law training data
 **Status:** ⏳ Training in progress on RunPod A100-80GB (started 2026-05-12)
 

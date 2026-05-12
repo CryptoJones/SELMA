@@ -91,7 +91,7 @@ packages in the training/inference pipeline.
 
 **SELMA Controls:**
 - [x] Base model sourced directly from Meta's official HuggingFace repository
-  (meta-llama/Llama-3.1-70B-Instruct) with verified checksums
+  (meta-llama/Llama-3.3-70B-Instruct) with verified checksums
 - [x] Model selection documents U.S.-origin provenance (see MODEL_SELECTION.md)
 - [x] All dependencies pinned with minimum versions in requirements.txt
 - [x] Training data provenance documented in DATA_SOURCES.md

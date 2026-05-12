@@ -94,31 +94,8 @@ def validate_template_and_image():
     print()
 
 
-def deploy_pod(hf_token):
-    """Deploy A100 pod with HF_TOKEN."""
-    # List available GPUs to find A100
-    gpu_query = """
-    query {
-      gpuTypes {
-        id
-        displayName
-      }
-    }
-    """
-    result = call_api(gpu_query)
-    gpu_id = None
-    for gpu in result.get("gpuTypes", []):
-        if "A100" in gpu.get("displayName", ""):
-            gpu_id = gpu["id"]
-            break
-
-    if not gpu_id:
-        print("No A100 GPU found. Available GPUs:")
-        for gpu in result.get("gpuTypes", []):
-            print(f"  {gpu['displayName']}")
-        sys.exit(1)
-
-    # Deploy pod
+def try_deploy(gpu_id, hf_token):
+    """Attempt to deploy a pod with the given GPU type. Returns pod dict or None."""
     deploy_query = """
     mutation {
       podFindAndDeployOnDemand(input: {
@@ -128,7 +105,6 @@ def deploy_pod(hf_token):
         volumeInGb: 100,
         containerDiskInGb: 50,
         templateId: """ + '"' + TEMPLATE_ID + '"' + """,
-        imageName: """ + '"' + IMAGE_NAME + '"' + """,
         env: [{key: "HF_TOKEN", value: """ + '"' + hf_token + '"' + """}],
         ports: "22/tcp"
       }) {
@@ -150,17 +126,39 @@ def deploy_pod(hf_token):
       }
     }
     """
+    try:
+        result = call_api(deploy_query)
+        return result.get("podFindAndDeployOnDemand")
+    except Exception as e:
+        if "SUPPLY_CONSTRAINT" in str(e):
+            return None
+        raise
 
-    print("Deploying A100-80GB pod...")
-    result = call_api(deploy_query)
-    pod = result.get("podFindAndDeployOnDemand", {})
 
-    if not pod.get("id"):
-        print(f"Failed to deploy: {pod}")
+def deploy_pod(hf_token):
+    """Deploy A100 pod with HF_TOKEN, trying GPU options in preference order."""
+    # Preference order: A100 PCIe 80GB → A100 SXM 80GB → A100 SXM 40GB
+    GPU_PREFERENCE = [
+        ("NVIDIA A100 80GB PCIe",    "A100 PCIe 80GB"),
+        ("NVIDIA A100-SXM4-80GB",    "A100 SXM 80GB"),
+        ("NVIDIA A100-SXM4-40GB",    "A100 SXM 40GB"),
+    ]
+
+    pod = None
+    for gpu_id, gpu_label in GPU_PREFERENCE:
+        print(f"Trying {gpu_label}...")
+        pod = try_deploy(gpu_id, hf_token)
+        if pod:
+            print(f"✓ Pod created on {gpu_label}")
+            break
+        print(f"  No availability — trying next option...")
+
+    if not pod or not pod.get("id"):
+        print("ERROR: No A100 GPUs available. Try again later or use the RunPod web console.")
         sys.exit(1)
 
     pod_id = pod["id"]
-    print(f"✓ Pod created: {pod_id}")
+    print(f"  Pod ID: {pod_id}")
     print(f"  GPU: {pod.get('machine', {}).get('gpuDisplayName', 'A100')}")
     print(f"  Cost: ${pod.get('costPerHr', 0):.2f}/hr")
     print()
@@ -173,7 +171,7 @@ def deploy_pod(hf_token):
         query {{
           pod(input: {{ podId: "{pod_id}" }}) {{
             id
-            status
+            desiredStatus
             runtime {{
               ports {{
                 ip
@@ -187,13 +185,14 @@ def deploy_pod(hf_token):
         """
         result = call_api(status_query)
         pod_status = result.get("pod", {})
+        current_status = pod_status.get("desiredStatus", "unknown")
 
-        if pod_status.get("status") == "RUNNING":
+        if current_status == "RUNNING":
             ports = pod_status.get("runtime", {}).get("ports", [])
             if ports and ports[0].get("publicPort"):
                 return pod_id, ports[0]["ip"], ports[0]["publicPort"]
 
-        print(f"  {attempt+1}/60 - Status: {pod_status.get('status', 'unknown')}")
+        print(f"  {attempt+1}/60 - Status: {current_status}")
 
     print("ERROR: Pod didn't become ready in time")
     sys.exit(1)

@@ -4,7 +4,7 @@
 
 model:
   name: selma-arkansas
-  base: meta-llama/Llama-3.1-70B-Instruct
+  base: meta-llama/Llama-3.3-70B-Instruct
   description: "SELMA model for Arkansas criminal law + federal"
 
 jurisdiction:

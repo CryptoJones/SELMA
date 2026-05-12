@@ -1,6 +1,6 @@
 # SELMA Model Selection Rationale
 
-## Decision: Meta Llama 3.1 70B Instruct
+## Decision: Meta Llama 3.3 70B Instruct
 
 **Date:** May 2026
 **Decision Makers:** Ronin 48, LLC

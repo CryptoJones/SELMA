@@ -51,8 +51,8 @@ both federal (Title 18) and Georgia (Title 16) jurisdictions. See
 
 ## Base Model
 
-- **Model:** Meta Llama 3.1 70B Instruct
-- **Source:** https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+- **Model:** Meta Llama 3.3 70B Instruct
+- **Source:** https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
 - **License:** Llama 3.1 Community License (Meta Platforms, Inc.)
 - **Origin:** United States
 - **Rationale:** See [MODEL_SELECTION.md](MODEL_SELECTION.md) for full rationale

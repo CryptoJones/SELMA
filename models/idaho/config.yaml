@@ -4,7 +4,7 @@
 
 model:
   name: selma-idaho
-  base: meta-llama/Llama-3.1-70B-Instruct
+  base: meta-llama/Llama-3.3-70B-Instruct
   description: "SELMA model for Idaho criminal law + federal"
 
 jurisdiction:

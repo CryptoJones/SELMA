@@ -1,9 +1,9 @@
 # SELMA QLoRA Fine-tuning Configuration
-# Base model: meta-llama/Llama-3.1-70B-Instruct (Llama 3.1 Community License)
+# Base model: meta-llama/Llama-3.3-70B-Instruct (Llama 3.1 Community License)
 # See docs/MODEL_SELECTION.md for rationale on model choice.
 
 model:
-  name: "meta-llama/Llama-3.1-70B-Instruct"
+  name: "meta-llama/Llama-3.3-70B-Instruct"
   revision: "main"
   torch_dtype: "bfloat16"
   attn_implementation: "flash_attention_2" 

@@ -7,7 +7,7 @@
 
 1. A RunPod account funded with at least $40 (leaves buffer for retries)
 2. A HuggingFace account with the Llama 3.1 license accepted:
-   https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+   https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
 3. Your HuggingFace token (Settings → Access Tokens → New token, read-only is fine)
 4. Your RunPod API key (RunPod console → Settings → API Keys)
 
@@ -162,7 +162,7 @@ Reduce `per_device_train_batch_size` in `configs/training_config.yaml` from 2 to
 
 **HuggingFace download failing:**
 Make sure `HF_TOKEN` is set and you accepted the Llama 3.1 license at
-https://huggingface.co/meta-llama/Llama-3.1-70B-Instruct
+https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
 
 **Pod terminated unexpectedly:**
 Use On-Demand, not Spot, for long training runs. Check RunPod console for interruption reason.
