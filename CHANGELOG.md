@@ -19,6 +19,14 @@ Will be tagged per state (e.g. `v1.0.0-georgia`, `v1.0.0-federal`).
 
 ---
 
+## [v0.1.1] — 2026-05-12
+
+### Fixed
+- `scripts/training/prepare_dataset.py`: path resolution now uses `__file__`-relative
+  REPO_ROOT so the script runs correctly from any working directory
+
+---
+
 ## [v0.1.0] — Published 2026-05-11
 
 **Ollama:** `ollama run Ronin48/selma:v0.1.0`

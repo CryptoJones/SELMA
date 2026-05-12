@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Ollama](https://img.shields.io/badge/Ollama-Ronin48%2Fselma-black)](https://ollama.com/Ronin48/selma)
 [![HuggingFace](https://img.shields.io/badge/HuggingFace-Ronin48%2Fselma-yellow)](https://huggingface.co/Ronin48/selma)
-[![Version](https://img.shields.io/badge/version-v0.1.0-blue)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-v0.1.1-blue)](CHANGELOG.md)
 
 ```
 python3 assets/banner.py
