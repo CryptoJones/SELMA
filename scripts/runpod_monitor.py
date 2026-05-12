@@ -232,25 +232,18 @@ def run_queue(abby_pod_id):
 
         monitor_pod(pod_id, name)
 
-    # ── Step 3: Balance check before ATTICUS ────────────────────────
+    # ── Step 3: First responder suite complete ───────────────────────
     log("")
     log("="*60)
-    log("BRUNO training complete. Checking balance before ATTICUS...")
+    log("First responder suite complete: ABBY → SELMA → BONES → BRUNO")
+    log("")
+    log("ATTICUS is ON HOLD — top up RunPod credits before queuing.")
+    log("When ready, run:")
+    log("  python3 scripts/runpod_monitor.py --atticus")
     balance, spend_rate = get_balance()
     if balance is not None:
-        log(f"Remaining credit: ${balance:.2f} | Current spend rate: ${spend_rate:.2f}/hr")
-        if balance >= 20:
-            log("✓ Sufficient balance for ATTICUS training (~$15-25).")
-            log("To queue ATTICUS, run:")
-            log("  python3 scripts/runpod_monitor.py --atticus")
-        else:
-            log(f"⚠ Balance ${balance:.2f} may be too low for ATTICUS 70B training.")
-            log("Top up RunPod credits then run:")
-            log("  python3 scripts/runpod_monitor.py --atticus")
-    else:
-        log("Could not fetch balance — check runpod.io/console/billing manually.")
-
-    log("Queue complete.")
+        log(f"Remaining credit: ${balance:.2f} | Spend rate: ${spend_rate:.2f}/hr")
+    log("="*60)
 
 
 def run_atticus():
