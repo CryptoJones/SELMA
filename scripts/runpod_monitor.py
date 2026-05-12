@@ -99,8 +99,26 @@ def get_balance():
         return None, None
 
 
+def get_running_pods():
+    """Return list of currently running pods."""
+    try:
+        data = gql("{ myself { pods { id name desiredStatus } } }")
+        return data.get("myself", {}).get("pods", [])
+    except Exception:
+        return []
+
+
 def deploy_pod(model_name, train_cmd):
     """Deploy a new training pod for the given model."""
+    # Safety check: abort if any pod is already running
+    running = [p for p in get_running_pods() if p.get("desiredStatus") == "RUNNING"]
+    if running:
+        log(f"⚠ ABORTED — {len(running)} pod(s) already running before deploying {model_name}:")
+        for p in running:
+            log(f"  {p['name']} [{p['id']}] — {p['desiredStatus']}")
+        log("Terminate existing pods before deploying a new one.")
+        return None
+
     log(f"Deploying {model_name} training pod...")
 
     for gpu_id in GPU_PREFERENCE:
