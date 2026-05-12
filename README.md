@@ -5,6 +5,18 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Ollama](https://img.shields.io/badge/Ollama-Ronin48%2Fselma-black)](https://ollama.com/Ronin48/selma)
 
+## Supporters
+
+SELMA is community-funded. Thank you to everyone who has contributed to keeping this project open and free.
+
+| Donor | Amount | Note |
+|---|---|---|
+| Joe Sixpack (anonymous) | $200 | Founding donor |
+
+*Want to support SELMA? See [CONTRIBUTING.md](CONTRIBUTING.md) or reach out to the maintainers.*
+
+---
+
 ## Overview
 
 SELMA is an open-source machine learning model fine-tuned to help law enforcement
