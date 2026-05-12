@@ -14,9 +14,11 @@ python3 assets/banner.py
 
 SELMA is community-funded. Thank you to everyone who has contributed to keeping this project open and free.
 
-| Donor | Amount | Note |
-|---|---|---|
-| Joe Sixpack (anonymous) | $200 | Founding donor |
+|| Donor | Amount | Note |
+||---|---|---|
+|| Ronin 48, LLC | N/A | Founding donor |
+|| Joe Sixpack (anonymous) | $200 | Founding donor |
+|| Ronin 48, LLC | N/A | Primary sponsor of research time and equipment |
 
 *Want to support SELMA? See [CONTRIBUTING.md](CONTRIBUTING.md) or reach out to the maintainers.*
 

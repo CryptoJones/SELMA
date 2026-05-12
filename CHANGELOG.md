@@ -19,11 +19,12 @@ Will be tagged per state (e.g. `v1.0.0-georgia`, `v1.0.0-federal`).
 
 ---
 
-## [v0.1.0] — 2026-05-11
+## [v0.1.0] — Published 2026-05-11
 
 **Ollama:** `ollama run Ronin48/selma:v0.1.0`
 **Base model:** `meta-llama/Llama-3.1-8B-Instruct` (no fine-tuning)
 **Type:** Prompt-engineered baseline
+**Status:** ✓ Published to Ollama registry on 2026-05-11
 
 ### Added
 - Initial SELMA system prompt with criminal statute analysis framework
@@ -36,11 +37,23 @@ Will be tagged per state (e.g. `v1.0.0-georgia`, `v1.0.0-federal`).
 - Inference parameters tuned for legal precision (temp=0.3, top_p=0.9)
 - Published to Ollama registry: https://ollama.com/Ronin48/selma
 
-### Planned for v0.2.0
-- Sentencing guideline integration in system prompt
-- Jurisdiction-specific prompt variants (Georgia, Federal)
+---
 
-### Planned for v1.0.0
-- First QLoRA fine-tuned weights (Llama 3.1 8B, Georgia + Federal)
-- Trained on: U.S. Code Title 18, O.C.G.A. Title 16, CourtListener case law,
+## [v1.0.0] — In Training (Started 2026-05-12)
+
+**Base model:** `meta-llama/Llama-3.1-70B-Instruct` (QLoRA fine-tuned)
+**Type:** Fine-tuned on criminal law training data
+**Status:** ⏳ Training in progress on RunPod A100-80GB (started 2026-05-12)
+
+### In Progress
+- QLoRA fine-tuning on 70B base model
+- Training data: U.S. Code Title 18, O.C.G.A. Title 16, CourtListener case law,
   USSG sentencing guidelines, ~50K synthetic incident-to-charge examples
+- ETA: Complete by 2026-05-13 (~8-10 hours training)
+- Adapter will be uploaded to HuggingFace after completion
+- Will merge with base weights for production deployment
+
+### Planned for v1.1.0
+- Additional state models (California, Texas, New York, Florida)
+- Sentencing guideline integration in fine-tuned weights
+- State-specific prompt variants
