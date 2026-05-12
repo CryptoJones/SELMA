@@ -44,26 +44,6 @@ SELMA was built on the conviction that good tools should be open, accountable, a
 to every agency regardless of budget. It does not replace prosecutors, attorneys, or judicial
 review — it is a force-multiplier for the investigator who needs a place to start.
 
-### Sister Project: ATTICUS
-
-SELMA does not stand alone. It is one half of a balanced system.
-
-[**ATTICUS**](https://codeberg.org/Ronin48/ATTICUS) — *Advocacy, Trial, Testimony, Innocence, Case, Unified Scout* — is SELMA's companion model, built for the other side of
-the courtroom. Where SELMA identifies what the prosecution may charge, ATTICUS builds the defense.
-Where SELMA maps evidence to statutes, ATTICUS maps evidence to constitutional protections.
-
-This symmetry is intentional. A system that only serves prosecution is a system that can cause
-harm. ATTICUS ensures that every capability SELMA gives law enforcement has a counterpart in
-the hands of the public defender.
-
-| | SELMA | ATTICUS |
-|---|---|---|
-| **Purpose** | Prosecution-side statute identification | Defense-side strategy and analysis |
-| **Users** | Patrol officers, detectives, special agents | Public defenders, defense attorneys |
-| **Output** | Applicable charges and elements, legal reasoning | Defense theories, constitutional violations, evidentiary weaknesses |
-| **Training data** | Criminal statutes, case law, charging documents | Suppression motions, acquittals, Brady/Giglio material, exoneration data |
-| **Repository** | [Ronin48/SELMA](https://codeberg.org/Ronin48/SELMA) | [Ronin48/ATTICUS](https://codeberg.org/Ronin48/ATTICUS) |
-
 ---
 
 ## Architecture
@@ -278,7 +258,7 @@ SELMA, BONES, and BRUNO are the three first responder models. Law enforcement, E
 | DUI crash with injuries | SELMA (criminal charges) | BONES (patient care) + BRUNO (extrication if needed) |
 | Mass casualty incident | BONES (triage, treatment) | BRUNO (ICS, sectors) + SELMA (criminal nexus if applicable) |
 
-> ABBY (digital forensics) and ATTICUS (legal defense) are separate tools and operate independently of the first responder suite.
+> SELMA pairs with [ATTICUS](https://codeberg.org/Ronin48/ATTICUS) *(Advocacy, Trial, Testimony, Innocence, Case, Unified Scout)* — every capability SELMA gives law enforcement has a counterpart in the hands of the public defender. ABBY (digital forensics) operates independently of the first responder suite.
 
 ---
 
