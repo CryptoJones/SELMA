@@ -1,5 +1,10 @@
 # SELMA Training Guide
 
+> **Just want to try SELMA?** A pre-configured model is published on Ollama —
+> no training required: `ollama run Ronin48/selma`
+>
+> This guide is for contributors training fine-tuned state models.
+
 ## Prerequisites
 
 ### Hardware Requirements

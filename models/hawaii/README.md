@@ -12,6 +12,17 @@ This model is trained on Hawaii's criminal statutes
 - [ ] Model trained
 - [ ] Model evaluated
 
+## Published Model
+
+A base version of SELMA is available now on Ollama (no training required):
+
+```bash
+ollama run Ronin48/selma
+```
+
+This uses Llama 3.1 8B with SELMA's full system prompt. The state-specific
+fine-tuned adapter below will replace it once trained.
+
 ## Training
 
 ```bash

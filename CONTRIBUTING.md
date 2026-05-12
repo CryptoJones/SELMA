@@ -69,6 +69,19 @@ chmod +x scripts/train.sh
 ./scripts/train.sh
 ```
 
+### Testing Against the Published Model
+
+Before submitting, verify your fine-tuned adapter improves over the baseline.
+The baseline is the published model on the Ollama registry:
+
+```bash
+ollama run Ronin48/selma
+```
+
+Run the same incident descriptions through both the published model and your
+fine-tuned version. Your adapter should show tighter statute citations and
+more accurate element mapping for the state you trained.
+
 ### Submitting Your Adapter
 
 1. Upload to HuggingFace:
