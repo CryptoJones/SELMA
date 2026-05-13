@@ -39,17 +39,17 @@ TRAINING_QUEUE = [
     {
         "name": "SELMA",
         "repo": "https://codeberg.org/Ronin48/SELMA.git",
-        "cmd": "git clone https://codeberg.org/Ronin48/SELMA.git && cd SELMA && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+        "cmd": "bash <(curl -s https://codeberg.org/Ronin48/SELMA/raw/branch/main/scripts/launch.sh)",
     },
     {
         "name": "BONES",
         "repo": "https://codeberg.org/Ronin48/BONES.git",
-        "cmd": "git clone https://codeberg.org/Ronin48/BONES.git && cd BONES && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+        "cmd": "bash <(curl -s https://codeberg.org/Ronin48/BONES/raw/branch/main/scripts/launch.sh)",
     },
     {
         "name": "BRUNO",
         "repo": "https://codeberg.org/Ronin48/BRUNO.git",
-        "cmd": "git clone https://codeberg.org/Ronin48/BRUNO.git && cd BRUNO && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+        "cmd": "bash <(curl -s https://codeberg.org/Ronin48/BRUNO/raw/branch/main/scripts/launch.sh)",
     },
     # ATTICUS queued manually after balance check
 ]
@@ -269,7 +269,7 @@ def run_atticus():
     atticus = {
         "name": "ATTICUS",
         "repo": "https://codeberg.org/Ronin48/ATTICUS.git",
-        "cmd": "git clone https://codeberg.org/Ronin48/ATTICUS.git && cd ATTICUS && python3 scripts/training/train_qlora.py --config configs/training_config.yaml",
+        "cmd": "bash <(curl -s https://codeberg.org/Ronin48/ATTICUS/raw/branch/main/scripts/launch.sh)",
     }
     pod_id = deploy_pod(atticus["name"], atticus["cmd"])
     if not pod_id:
