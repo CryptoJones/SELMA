@@ -289,6 +289,14 @@ and [SECURITY.md](SECURITY.md) for the security policy.
 
 ---
 
+## Training Notes
+
+If you're training SELMA on RunPod or another GPU cloud provider, read [LESSONS_LEARNED.md](LESSONS_LEARNED.md)
+before you start. ABBY's file has the most complete record of first-run errors and fixes —
+SELMA's file links there and will capture any SELMA-specific issues as they arise.
+
+---
+
 ## Contributing
 
 Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
