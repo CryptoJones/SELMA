@@ -2,9 +2,10 @@
 
 **An Open-Source Model Trained for Law Enforcement**
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Ollama](https://img.shields.io/badge/Ollama-Ronin48%2Fselma-black)](https://ollama.com/Ronin48/selma)
-[![HuggingFace](https://img.shields.io/badge/HuggingFace-Ronin48%2Fselma-yellow)](https://huggingface.co/Ronin48/selma)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Ronin48LLC%2Fselma--lora--adapter-FFD21E?logo=huggingface&logoColor=000)](https://huggingface.co/Ronin48LLC/selma-lora-adapter)
+[![Codeberg](https://img.shields.io/badge/Codeberg-Ronin48%2FSELMA-2185D0?logo=codeberg&logoColor=white)](https://codeberg.org/Ronin48/SELMA)
+[![GitHub](https://img.shields.io/badge/GitHub-CryptoJones%2FSELMA-181717?logo=github&logoColor=white)](https://github.com/CryptoJones/SELMA)
 [![Version](https://img.shields.io/badge/version-v0.1.1-blue)](CHANGELOG.md)
 
 ```
