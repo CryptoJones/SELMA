@@ -16,6 +16,33 @@ This guide covers the Ronin 48 training process for SELMA, ABBY, BONES, and BRUN
 
 ---
 
+## Custom RunPod Template (Recommended)
+
+We publish a pre-configured Docker image that bakes in all dependency fixes
+so you don't have to fight the environment. Use it when creating your pod.
+
+**Docker image:** `ronin48/qlora-training:latest`
+
+### Creating a RunPod template from this image
+
+1. Go to `https://www.runpod.io/console/serverless` → **Templates** → **New Template**
+2. Set **Container Image** to `ronin48/qlora-training:latest`
+3. Set **Container Disk** to `50GB`
+4. Set **Expose HTTP Ports** to `8888`
+5. Set **Expose TCP Ports** to `22`
+6. Save the template — use it instead of the default PyTorch template when deploying
+
+What the image includes vs. the stock RunPod PyTorch template:
+- torchvision removed (crashes on torch 2.4+ due to version mismatch)
+- transformers, peft, trl, bitsandbytes pre-installed at compatible versions
+- HF_HOME pre-set to `/workspace/hf_cache` (keeps weights on the network volume)
+- SSH pre-configured
+
+If you prefer the stock template, use the manual process below — but expect
+to run several `pip install` commands before training starts.
+
+---
+
 ## Step 1 — Deploy a Pod
 
 ### Option A: Via the monitor script (recommended for queue runs)
