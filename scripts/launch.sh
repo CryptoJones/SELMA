@@ -86,3 +86,14 @@ echo "[train] PID $TRAIN_PID — follow logs: tail -f $LOG"
 wait $TRAIN_PID
 
 echo "=== $REPO_NAME training complete $(date) ==="
+
+# Upload adapter to HuggingFace
+ADAPTER_DIR="$REPO_DIR/output/selma-qlora/final"
+HF_REPO="Ronin48/selma-lora-adapter"
+if [ -d "$ADAPTER_DIR" ]; then
+    echo "[upload] pushing adapter to $HF_REPO..."
+    huggingface-cli upload "$HF_REPO" "$ADAPTER_DIR" --token "$HF_TOKEN"
+    echo "[upload] done: $HF_REPO"
+else
+    echo "[upload] WARNING: adapter not found at $ADAPTER_DIR — upload manually"
+fi
