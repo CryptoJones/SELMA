@@ -18,21 +18,23 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+import os
+
 import requests
 
-RUNPOD_KEY = "RUNPOD_KEY_REDACTED"
-HF_TOKEN   = "HF_TOKEN_REDACTED"
-TG_TOKEN   = "TG_TOKEN_REDACTED"
-TG_CHAT    = "8702377965"
+RUNPOD_KEY = os.environ["RUNPOD_KEY"]
+HF_TOKEN   = os.environ["HF_TOKEN"]
+TG_TOKEN   = os.environ["TG_TOKEN"]
+TG_CHAT    = os.environ["TG_CHAT"]
 RUNPOD_URL = f"https://api.runpod.io/graphql?api_key={RUNPOD_KEY}"
 STATE_FILE = Path.home() / ".ronin48_training_state.json"
 ADAPTER_BASE = Path.home() / "Source/adapters"
 
 ADAPTERS = {
-    "ABBY":  {"hf_repo": "Ronin48/abby-lora-adapter",  "local": ADAPTER_BASE / "abby"},
-    "SELMA": {"hf_repo": "Ronin48/selma-lora-adapter", "local": ADAPTER_BASE / "selma"},
-    "BONES": {"hf_repo": "Ronin48/bones-lora-adapter", "local": ADAPTER_BASE / "bones"},
-    "BRUNO": {"hf_repo": "Ronin48/bruno-lora-adapter", "local": ADAPTER_BASE / "bruno"},
+    "ABBY":  {"hf_repo": "Ronin48LLC/abby-lora-adapter",  "local": ADAPTER_BASE / "abby"},
+    "SELMA": {"hf_repo": "Ronin48LLC/selma-lora-adapter", "local": ADAPTER_BASE / "selma"},
+    "BONES": {"hf_repo": "Ronin48LLC/bones-lora-adapter", "local": ADAPTER_BASE / "bones"},
+    "BRUNO": {"hf_repo": "Ronin48LLC/bruno-lora-adapter", "local": ADAPTER_BASE / "bruno"},
 }
 
 IDLE_THRESHOLD = 10  # GPU% below this = idle
@@ -84,7 +86,7 @@ def download_adapter(model):
     cfg["local"].mkdir(parents=True, exist_ok=True)
     subprocess.run(
         [
-            "huggingface-cli", "download", cfg["hf_repo"],
+            "hf", "download", cfg["hf_repo"],
             "--local-dir", str(cfg["local"]),
             "--token", HF_TOKEN,
         ],
@@ -123,10 +125,13 @@ def main():
         if util > IDLE_THRESHOLD:
             ps["was_active"] = True
 
+        # Use state name (set manually) for detection, fall back to live pod name
+        detect_name = ps.get("name", name)
+
         if ps["was_active"] and util <= IDLE_THRESHOLD and not ps["complete"]:
-            model = detect_model(name)
+            model = detect_model(detect_name)
             if not model:
-                print(f"  Could not detect model from pod name '{name}' — skipping")
+                print(f"  Could not detect model from name '{detect_name}' — skipping")
                 continue
 
             ps["complete"] = True
@@ -135,7 +140,7 @@ def main():
             send_telegram(f"Training complete for {model}. Downloading adapter from HuggingFace...")
 
         if ps["complete"] and not ps["downloaded"]:
-            model = detect_model(name)
+            model = detect_model(detect_name)
             if not model:
                 continue
             try:
