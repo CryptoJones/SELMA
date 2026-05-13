@@ -59,6 +59,7 @@ pip install -q \
     "peft==0.12.0" \
     "trl==0.11.4" \
     "bitsandbytes==0.43.1" \
+    "triton==2.3.0" \
     "accelerate" \
     "datasets" \
     "pyyaml" \
