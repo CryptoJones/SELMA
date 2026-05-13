@@ -314,4 +314,4 @@ Fine-tuned adapter weights and all original SELMA contributions remain Apache 2.
 
 ---
 
-Proudly Made in Nebraska. Go Big Red!
+Proudly Made in Nebraska. Go Big Red! 🌽
