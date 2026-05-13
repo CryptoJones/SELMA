@@ -62,7 +62,7 @@ pip uninstall -q -y torchvision 2>/dev/null || true
 pip install -q --upgrade \
     "transformers>=4.46.0,<4.50.0" \
     "peft" \
-    "trl" \
+    "trl>=0.12.0,<1.0.0" \
     "bitsandbytes" \
     "accelerate" \
     "datasets" \
