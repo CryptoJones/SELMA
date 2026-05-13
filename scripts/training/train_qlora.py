@@ -52,7 +52,7 @@ def setup_model(config: dict):
         quantization_config=bnb_config,
         device_map="auto",
         torch_dtype=torch.bfloat16,
-        attn_implementation=config["model"].get("attn_implementation", "flash_attention_2"),
+        attn_implementation=config["model"].get("attn_implementation", "eager"),
         trust_remote_code=True,
     )
 
