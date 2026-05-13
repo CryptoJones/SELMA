@@ -58,7 +58,7 @@ pip install -q \
     "transformers==4.44.2" \
     "peft==0.12.0" \
     "trl==0.11.4" \
-    "bitsandbytes>=0.41.0" \
+    "bitsandbytes==0.43.1" \
     "accelerate" \
     "datasets" \
     "pyyaml" \
