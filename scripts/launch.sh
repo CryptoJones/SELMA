@@ -58,8 +58,8 @@ pip install -q --upgrade pip
 echo "[pip] installing dependencies..."
 pip install -q \
     "transformers" \
-    "peft==0.12.0" \
-    "trl==0.11.4" \
+    "peft" \
+    "trl" \
     "bitsandbytes" \
     "accelerate" \
     "datasets" \
