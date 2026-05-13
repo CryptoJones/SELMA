@@ -27,6 +27,7 @@ echo "Workspace: $WORKSPACE"
 
 # HuggingFace cache — always on the large volume, never the container disk
 export HF_HOME="${HF_HOME:-$WORKSPACE/hf_cache}"
+export HF_HUB_DISABLE_XET=1  # workaround for XET background writer crash on large model downloads
 
 # bitsandbytes CUDA 13 library (installed via pip nvidia packages)
 _nvidia_lib=$(python3 -c "import site; print(site.getsitepackages()[0])")/nvidia/cu13/lib

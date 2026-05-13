@@ -9,6 +9,7 @@ Requires: A100-80GB GPU (or equivalent).
 import argparse
 import json
 import os
+os.environ.setdefault("HF_HUB_DISABLE_XET", "1")  # workaround for XET background writer crash
 from pathlib import Path
 
 import torch
