@@ -114,7 +114,7 @@ No Python, no GPU, no configuration required. Works on any machine with Ollama i
 ollama run Ronin48/selma
 ```
 
-The published model uses Llama 3.1 8B with SELMA's full system prompt and inference
+The published model uses Llama 3.3 70B with SELMA's full system prompt and inference
 parameters. A fine-tuned QLoRA version (v1.0.0) will replace it upon training completion.
 
 ### HuggingFace
@@ -311,3 +311,7 @@ especially encouraged to contribute.
 
 **Base Model Weights:** Meta Llama 3.1 Community License. See [docs/MODEL_SELECTION.md](docs/MODEL_SELECTION.md) for details.
 Fine-tuned adapter weights and all original SELMA contributions remain Apache 2.0.
+
+---
+
+Proudly Made in Nebraska. Go Big Red!
