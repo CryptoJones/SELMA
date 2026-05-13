@@ -28,6 +28,9 @@ echo "Workspace: $WORKSPACE"
 # HuggingFace cache — always on the large volume, never the container disk
 export HF_HOME="${HF_HOME:-$WORKSPACE/hf_cache}"
 export TRANSFORMERS_CACHE="$HF_HOME"
+
+# bitsandbytes CUDA 13 library (installed via pip nvidia packages)
+export LD_LIBRARY_PATH=/usr/local/lib/python3.10/dist-packages/nvidia/cu13/lib:${LD_LIBRARY_PATH:-}
 mkdir -p "$HF_HOME"
 echo "HF cache: $HF_HOME"
 
