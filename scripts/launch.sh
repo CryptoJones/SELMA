@@ -78,8 +78,11 @@ python scripts/data_collection/generate_synthetic.py
 echo "[data] preparing dataset..."
 python scripts/training/prepare_dataset.py
 
-# Train
+# Train — nohup so terminal disconnects don't kill the process
 echo "[train] starting QLoRA training..."
-python scripts/training/train_qlora.py --config configs/training_config.yaml
+nohup python scripts/training/train_qlora.py --config configs/training_config.yaml >> "$LOG" 2>&1 &
+TRAIN_PID=$!
+echo "[train] PID $TRAIN_PID — follow logs: tail -f $LOG"
+wait $TRAIN_PID
 
 echo "=== $REPO_NAME training complete $(date) ==="
