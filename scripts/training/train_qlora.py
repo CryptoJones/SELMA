@@ -50,7 +50,7 @@ def setup_model(config: dict):
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=bnb_config,
-        device_map="auto",
+        device_map={"": 0},
         attn_implementation=config["model"].get("attn_implementation", "eager"),
         trust_remote_code=True,
     )
