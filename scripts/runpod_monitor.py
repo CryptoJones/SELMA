@@ -122,25 +122,33 @@ def deploy_pod(model_name, train_cmd):
     log(f"Deploying {model_name} training pod...")
 
     for gpu_id in GPU_PREFERENCE:
-        mutation = """
-        mutation {
-          podFindAndDeployOnDemand(input: {
-            name: \"""" + model_name + """-Training",
-            gpuTypeId: \"""" + gpu_id + """\",
-            gpuCount: 1,
-            volumeInGb: 100,
-            containerDiskInGb: 50,
-            templateId: \"""" + TEMPLATE_ID + """\",
-            env: [{key: "HF_TOKEN", value: \"""" + HF_TOKEN + """\"}, {key: "HF_HOME", value: "/workspace/hf_cache"}, {key: "TRANSFORMERS_CACHE", value: "/workspace/hf_cache"}],
-            ports: "22/tcp"
-          }) {
-            id name costPerHr
-            machine { gpuDisplayName }
-          }
-        }
-        """
         try:
-            result = gql(mutation)
+            result = gql(
+                """
+                mutation deploy($input: PodFindAndDeployOnDemandInput!) {
+                  podFindAndDeployOnDemand(input: $input) {
+                    id name costPerHr
+                    machine { gpuDisplayName }
+                  }
+                }
+                """,
+                {
+                    "input": {
+                        "name": f"{model_name}-Training",
+                        "gpuTypeId": gpu_id,
+                        "gpuCount": 1,
+                        "volumeInGb": 300,
+                        "volumeMountPath": "/workspace",
+                        "containerDiskInGb": 50,
+                        "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+                        "env": [
+                            {"key": "HF_TOKEN", "value": HF_TOKEN},
+                            {"key": "HF_HOME", "value": "/workspace/hf_cache"},
+                        ],
+                        "ports": "22/tcp",
+                    }
+                },
+            )
             pod = result.get("podFindAndDeployOnDemand")
             if pod and pod.get("id"):
                 log(f"✓ {model_name} pod deployed — ID: {pod['id']} | GPU: {pod.get('machine',{}).get('gpuDisplayName','A100')} | ${pod.get('costPerHr',0):.2f}/hr")
