@@ -1,172 +1,161 @@
-# Training SELMA on RunPod
+# Training on RunPod
 
-**Estimated cost: ~$25–35 for one state model (70B)**
+**Estimated cost: ~$12–15 per model (70B, A100 PCIe at $1.39/hr)**
 **Estimated time: 8–10 hours on a single A100-80GB**
 
-## What You Need Before Starting
+This guide covers the Ronin 48 training process for SELMA, ABBY, BONES, and BRUNO on RunPod.
 
-1. A RunPod account funded with at least $40 (leaves buffer for retries)
-2. A HuggingFace account with the Llama 3.1 license accepted:
-   https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
+---
+
+## What You Need
+
+1. A RunPod account with at least $40 in credits (buffer for the full first responder suite)
+2. A HuggingFace account with the Llama 3.3 license accepted:
+   `https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct`
 3. Your HuggingFace token (Settings → Access Tokens → New token, read-only is fine)
-4. Your RunPod API key (RunPod console → Settings → API Keys)
 
 ---
 
-## Step 1 — Launch a Pod
+## Step 1 — Deploy a Pod
 
-### Option A: Fully Automated (For the Lazy™) — ⚠️ NOT RECOMMENDED FOR SECURITY REASONS
-
-Because programmers are fundamentally lazy — and that's a feature, not a bug — we built a script that does everything:
-
-⚠️ **Security warning:** This script runs unattended SSH commands on a remote pod. Your API keys are passed as environment variables. Only use this on trusted machines or in isolated environments.
+### Option A: Via the monitor script (recommended for queue runs)
 
 ```bash
-export RUNPOD_API_KEY="your_runpod_key_here"
-export HF_TOKEN="hf_your_token_here"
-python3 scripts/runpod_deploy.py
+python3 scripts/runpod_monitor.py
 ```
 
-This script:
-1. Deploys an A100-80GB pod to RunPod
-2. Waits for it to be ready (~2-3 minutes)
-3. SSHes in automatically
-4. Clones SELMA and starts training
-5. Streams output to your terminal
+This deploys an A100 pod with the correct volume size and env vars, then monitors
+GPU activity and auto-queues the next model when training completes.
 
-No web console. No clicking. No thinking. Just training.
+**Important:** The script checks for running pods before deploying. Never run it
+if a pod is already active — it will abort safely, but double-check first.
 
-### Option B: Step-by-Step Configurator
+### Option B: Manual (RunPod web console)
 
-If you prefer to see the steps before running them:
-
-```bash
-export RUNPOD_API_KEY="your_runpod_key_here"
-export HF_TOKEN="hf_your_token_here"
-bash scripts/launch_runpod_manual.sh
-```
-
-The script validates your setup and prints exact web console instructions with your HF_TOKEN pre-filled.
-
-### Option C: Manual (RunPod web console)
-
-1. Go to https://www.runpod.io/console/pods and click **Deploy**
-2. Select GPU: **NVIDIA A100 80GB PCIe** (~$2–3/hr) or **SXM** (~$3–4/hr)
-   - PCIe is cheaper and sufficient; SXM is faster but costs more
-3. Select template: **RunPod PyTorch 2.1** (has CUDA 11.8 pre-installed)
-4. Set storage: **100GB volume** (model weights alone are ~140GB during training)
-5. Under **Environment Variables**, add:
+1. Go to `https://www.runpod.io/console/pods` and click **Deploy**
+2. Select GPU: **NVIDIA A100 80GB PCIe** (~$1.39/hr)
+3. Select template: **RunPod PyTorch 2.2** (has CUDA pre-installed)
+4. Set storage: **200GB network volume** (model weights are ~130GB)
+5. Container disk: **50GB**
+6. Under **Environment Variables**, add:
    - `HF_TOKEN` = your HuggingFace token
-6. Click **Deploy On-Demand**
+   - `HF_HOME` = `/workspace/hf_cache`
+   - `TRANSFORMERS_CACHE` = `/workspace/hf_cache`
+7. Click **Deploy On-Demand**
 
 ---
 
-## Step 2 — SSH Into the Pod
+## Step 2 — Start Training
 
-Once the pod shows **Running** in the console, click **Connect** and copy the SSH command. It will look like:
+> **Note:** SSH is unreliable on RunPod templates — the template's `start.sh` runs
+> `sleep infinity` rather than launching sshd. Use the **web terminal** instead.
+
+1. In the RunPod console, click **Connect** on your pod
+2. Choose **Web Terminal**
+3. Paste the launch command for your model:
+
+**SELMA:**
+```bash
+HF_TOKEN=your_token_here bash <(curl -s https://codeberg.org/Ronin48/SELMA/raw/branch/main/scripts/launch.sh)
+```
+
+**ABBY:**
+```bash
+HF_TOKEN=your_token_here bash <(curl -s https://codeberg.org/Ronin48/ABBY/raw/branch/main/scripts/launch.sh)
+```
+
+**BONES:**
+```bash
+HF_TOKEN=your_token_here bash <(curl -s https://codeberg.org/Ronin48/BONES/raw/branch/main/scripts/launch.sh)
+```
+
+**BRUNO:**
+```bash
+HF_TOKEN=your_token_here bash <(curl -s https://codeberg.org/Ronin48/BRUNO/raw/branch/main/scripts/launch.sh)
+```
+
+The script handles everything: clone, pip install, data generation, and training.
+Watch for `[train] starting QLoRA training...` — after that the GPU should spike above 10%.
+
+### What launch.sh does
+
+1. Sets `HF_HOME` to `/workspace/hf_cache` (200GB volume — never the container disk)
+2. Clones or updates the repo into `/workspace/<MODEL>`
+3. Upgrades pip and installs all dependencies
+4. Runs synthetic data generation
+5. Prepares the training dataset
+6. Starts `train_qlora.py`
+
+---
+
+## Step 3 — Monitor Training
+
+Training is monitored automatically by `runpod_monitor.py` when running a queue.
+For a standalone pod, you can watch GPU activity in the RunPod console or check logs:
 
 ```bash
-ssh root@<ip> -p <port> -i ~/.ssh/id_rsa
+tail -f /workspace/logs/train.log
+```
+
+GPU utilization above 10% = training is active.
+GPU dropping back to 0% after being active = training complete.
+
+---
+
+## Step 4 — Save the Adapter
+
+**Do this before stopping the pod.**
+
+Upload to HuggingFace:
+
+```bash
+huggingface-cli upload Ronin48/selma-lora-adapter /workspace/SELMA/output/selma-qlora/final/
 ```
 
 ---
 
-## Step 3 — Run Training
+## Step 5 — Terminate the Pod
 
-Once connected via SSH:
+**You are billed until the pod is terminated.** Terminate immediately after the upload.
 
-```bash
-# Clone the repo
-git clone https://codeberg.org/Ronin48/SELMA.git
-cd SELMA
+In the RunPod console: **Manage → Terminate**
 
-# Run the full pipeline (data collection → training → adapter save)
-# Skip the merge step — see note below
-chmod +x scripts/train.sh
-./scripts/train.sh --skip-merge
-```
-
-Training will print loss every 10 steps. Expect ~8–10 hours. You can safely
-close your SSH session — the pod keeps running. Reconnect anytime to check progress:
-
-```bash
-tail -f output/selma-qlora/trainer_log.jsonl
-```
+Or via the monitor script — it terminates automatically when GPU goes idle.
 
 ---
 
-## Step 4 — Save Your Work Before Stopping the Pod
-
-**Do this before you stop the pod or your adapter will be lost.**
-
-Upload the adapter to HuggingFace:
-
-```bash
-huggingface-cli upload <your-username>/selma-70b-georgia-adapter \
-    output/selma-qlora/final/
-```
-
-Or copy it locally over SCP:
-
-```bash
-# Run this on your local machine (not the pod)
-scp -P <port> -r root@<ip>:~/SELMA/output/selma-qlora/final/ ./selma-adapter/
-```
-
----
-
-## Step 5 — Stop the Pod
-
-**Stop the pod as soon as the upload/copy finishes — you're billed until you stop it.**
-
-In the RunPod console, click the **Stop** button on your pod.
-Or via the API:
-
-```bash
-runpodctl stop pod <pod-id>
-```
-
----
-
-## About the Merge Step
-
-Merging the LoRA adapter into the 70B base model requires loading ~140GB into
-CPU RAM. RunPod A100 pods typically have 58–120GB of system RAM, which is not
-enough. **Skip the merge on RunPod** — the adapter works perfectly without it:
-
-- To serve with Ollama: load base model + adapter together (vLLM supports this)
-- To submit to SELMA: just upload the adapter to HuggingFace and open a PR
-- To do the merge: use a high-memory CPU instance (AWS `r6i.4xlarge`, ~$1/hr,
-  ~140GB RAM) and run `python scripts/training/merge_adapter.py` there
-
----
-
-## Cost Breakdown (One State Model, A100-80GB PCIe)
+## Cost Breakdown (Single Model, A100 PCIe)
 
 | Item | Hours | Rate | Cost |
 |---|---|---|---|
-| Training | ~9 hrs | ~$2.50/hr | ~$22.50 |
-| Data collection + setup | ~1 hr | ~$2.50/hr | ~$2.50 |
-| Buffer / retries | — | — | ~$5.00 |
-| **Total** | | | **~$30** |
+| Model weight download | ~1 hr | ~$1.39/hr | ~$1.40 |
+| Training | ~8–9 hrs | ~$1.39/hr | ~$11–12 |
+| Buffer | — | — | ~$2 |
+| **Total** | | | **~$14–16** |
 
-Spot instances can cut this in half but may be interrupted mid-training.
-Use **On-Demand** for a training run to avoid losing progress.
+Full first responder suite (ABBY + SELMA + BONES + BRUNO): ~$55–65
 
 ---
 
 ## Troubleshooting
 
+**Out of disk space during download:**
+Model weights must go to `/workspace/hf_cache`, not the container disk.
+`launch.sh` sets this automatically. If you're running manually, ensure:
+```bash
+export HF_HOME=/workspace/hf_cache
+export TRANSFORMERS_CACHE=/workspace/hf_cache
+```
+
 **Out of memory during training:**
 Reduce `per_device_train_batch_size` in `configs/training_config.yaml` from 2 to 1.
 
 **HuggingFace download failing:**
-Make sure `HF_TOKEN` is set and you accepted the Llama 3.1 license at
-https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct
+Confirm `HF_TOKEN` is set and you accepted the Llama 3.3 license at HuggingFace.
 
 **Pod terminated unexpectedly:**
-Use On-Demand, not Spot, for long training runs. Check RunPod console for interruption reason.
+Use On-Demand, not Spot, for long training runs.
 
-**Training loss not decreasing:**
-Check that `data/processed/train.jsonl` was created correctly by `prepare_dataset.py`.
-It should have at least 10,000 examples.
+**SSH connection refused:**
+Use the web terminal instead (Connect → Web Terminal in RunPod console).
+The template's startup script does not launch sshd.
