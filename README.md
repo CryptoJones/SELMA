@@ -1,5 +1,8 @@
 # SELMA — Specified Encapsulated Limitless Memory Archive
 
+> **Before deploying in an operational context, read [LIMITATIONS.md](LIMITATIONS.md).**
+
+
 **An Open-Source Model Trained for Law Enforcement**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
