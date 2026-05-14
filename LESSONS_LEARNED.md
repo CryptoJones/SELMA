@@ -11,7 +11,19 @@ it has the most complete record of the first training run.
 
 ## SELMA-Specific Notes
 
-*Nothing to record yet. If you hit a SELMA-specific error and fix it, add it here.*
+### Training Monitor Missed a Disk-Full Crash
+
+The training monitor has a known failure mode: if the pod crashes before GPU ever activates
+(e.g. disk full during model download, bad import, OOM before first forward pass), the monitor
+reports `GPU 0% | active=False` and interprets this as "still initializing." It does not alert.
+
+This happened at least three times across Ronin 48 training runs before the monitor was fixed
+with pre-flight checks and a stuck-pod alert.
+
+See [ABBY Error #20](https://codeberg.org/Ronin48/ABBY/raw/branch/main/LESSONS_LEARNED.md)
+for the full incident writeup, root causes, and fixes applied.
+
+**Rule: `GPU 0% | active=False` after 20+ minutes = crashed. SSH in and check `/workspace/logs/train.log`.**
 
 ---
 
