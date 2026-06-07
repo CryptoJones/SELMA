@@ -125,19 +125,22 @@ parameters. A fine-tuned QLoRA version (v1.0.0) will replace it upon training co
 
 Adapter weights and merged model weights will be published at:
 
-- **LoRA Adapter:** `Ronin48/selma-lora-adapter` — the fine-tuned adapter only (smaller download)
-- **Merged Model:** `Ronin48/selma-70b` — full merged weights, ready for inference
-- **Quantized (GGUF):** `Ronin48/selma-70b-GGUF` — for use with llama.cpp, LM Studio, and Ollama
+- **LoRA Adapter:** `Ronin48LLC/selma-lora-adapter` — the fine-tuned adapter only (smaller download)
+- **Merged Model:** `Ronin48LLC/selma-70b` — full merged weights, ready for inference
+- **Quantized (GGUF):** `Ronin48LLC/selma-70b-GGUF` — for use with llama.cpp, LM Studio, and Ollama
 
 ```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-model = AutoModelForCausalLM.from_pretrained("Ronin48/selma-70b")
+from peft import PeftModel
+from transformers import AutoModelForCausalLM
+
+base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.3-70B-Instruct")
+model = PeftModel.from_pretrained(base, "Ronin48LLC/selma-lora-adapter")
 ```
 
 ### LM Studio
 
 Once the GGUF weights are published to HuggingFace, SELMA will be searchable and
-downloadable directly inside LM Studio. Search for `Ronin48/selma`.
+downloadable directly inside LM Studio. Search for `Ronin48LLC/selma`.
 
 ---
 
